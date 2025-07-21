@@ -1,0 +1,42 @@
+name: Update Dependencies
+
+on:
+  schedule:
+    # Run weekly on Sundays at 2 AM UTC
+    - cron: '0 2 * * 0'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  update-dependencies:
+    name: Check for Dependency Updates
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Check for CMake dependency updates
+      run: |
+        echo "Checking current dependency versions in Dependency.cmake..."
+        
+        # Extract current versions
+        echo "Current GLFW version: $(grep -oP 'GIT_TAG\s+\K[^\s]+' Dependency.cmake | head -1 || echo 'Not found')"
+        echo "Current GLM version: $(grep -oP 'GIT_TAG\s+\K[^\s]+' Dependency.cmake | sed -n '2p' || echo 'Not found')"
+        echo "Current ImGui version: $(grep -oP 'GIT_TAG\s+\K[^\s]+' Dependency.cmake | tail -1 || echo 'Not found')"
+        
+        # Check GitHub releases for updates (this would need more sophisticated scripting)
+        echo "Manual dependency version checking would go here"
+        echo "Consider using tools like Renovate or Dependabot for automated updates"
+
+    - name: Create issue for dependency updates
+      if: false # Disable for now, enable when you want automated issues
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: 'Weekly Dependency Update Check',
+            body: 'Automated weekly check for dependency updates. Please review current versions and update if necessary.',
+            labels: ['dependencies', 'maintenance']
+          });
