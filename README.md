@@ -1,15 +1,17 @@
-# AGT Game Engine - Encapsulated OpenGL/GLFW Framework
+# AGL Game Engine - Modern C++17 Game Framework
 
-This project provides a clean, object-oriented wrapper around OpenGL, GLFW, and Dear ImGui for game development. All classes are contained within the `agt` (A Game Tutorial) namespace.
+A modern C++17 cross-platform game engine built with OpenGL, GLFW, and ImGui. This project provides a clean, object-oriented wrapper around OpenGL graphics programming with comprehensive abstractions for modern game development.
 
 ## Features
 
-- **Cross-platform C++17 support** (Windows, macOS, Linux)
-- **Encapsulated Window management** with GLFW
-- **Event-driven Input system** with callback support
-- **Integrated Dear ImGui** for debug interfaces
-- **FetchContent-based dependencies** (GLFW, GLM, STB, ImGui)
-- **Clean namespace organization** (agt)
+- **Modern C++17**: Uses modern C++ features including RAII, smart pointers, and move semantics
+- **Cross-platform support** (Windows, macOS, Linux)
+- **OpenGL 3.3**: Modern programmable pipeline with comprehensive abstractions
+- **Encapsulated systems**: Window, Input, Renderer, Texture, and Shader management
+- **ImGui integration** for real-time debugging and UI
+- **CMake build system** with FetchContent dependency management
+- **Multiple demo projects** in sandbox environment
+- **Pre-commit hooks** for code quality assurance
 
 ## Project Structure
 
