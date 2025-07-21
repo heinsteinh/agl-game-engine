@@ -1,0 +1,101 @@
+# Build directories
+build/
+bin/
+lib/
+out/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+!Dependency.cmake
+
+# Compiled object files
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+
+# Executable files
+*.exe
+TutoFromBook
+renderer_demo
+texture_demo
+
+# IDE and editor files
+.vscode/
+.vs/
+*.vcxproj*
+*.sln
+*.suo
+*.user
+*.filters
+.idea/
+*.swp
+*.swo
+*~
+
+# Xcode (macOS)
+*.xcodeproj/
+*.xcworkspace/
+
+# Debug files
+*.dSYM/
+*.pdb
+*.ilk
+
+# Package managers
+vcpkg_installed/
+conan/
+.conan/
+
+# System files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.orig
+
+# Git merge files
+*.BACKUP.*
+*.BASE.*
+*.LOCAL.*
+*.REMOTE.*
+*_BACKUP_*
+*_BASE_*
+*_LOCAL_*
+*_REMOTE_*
+
+# FetchContent downloaded dependencies (optional - uncomment if you want to ignore)
+# _deps/
+
+# Test coverage files
+*.gcov
+*.gcda
+*.gcno
+coverage/
+
+# Profiling files
+*.prof
+gmon.out
+
+# Documentation generated files
+docs/html/
+docs/latex/
