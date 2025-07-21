@@ -55,7 +55,14 @@ jobs:
     - name: Create build directory
       run: mkdir build
 
-    - name: Configure CMake
+    - name: Configure CMake (Windows)
+      if: runner.os == 'Windows'
+      working-directory: build
+      run: |
+        cmake .. -G "${{ matrix.generator }}" -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_INSTALL_PREFIX=install
+
+    - name: Configure CMake (Unix)
+      if: runner.os != 'Windows'
       working-directory: build
       run: |
         cmake .. \
@@ -112,7 +119,17 @@ jobs:
       with:
         cmake-version: '3.14'
 
-    - name: Build Sandbox - Renderer Demo
+    - name: Build Sandbox - Renderer Demo (Windows)
+      if: runner.os == 'Windows'
+      working-directory: sandbox
+      run: |
+        mkdir build
+        cd build
+        cmake .. -DDEMO_SELECTION=renderer
+        cmake --build . --config ${{ env.BUILD_TYPE }}
+
+    - name: Build Sandbox - Renderer Demo (Unix)
+      if: runner.os != 'Windows'
       working-directory: sandbox
       run: |
         mkdir build
