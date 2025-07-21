@@ -15,20 +15,20 @@ std::unique_ptr<ShaderProgram> Renderer::s_textureShader;
 void Renderer::Initialize() {
     // Enable depth testing by default
     EnableDepthTest();
-    
+
     // Enable blending for transparency
     EnableBlending();
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
+
     // Create basic shaders
     s_colorShader = ShaderProgram::CreateBasicColorShader();
     s_textureShader = ShaderProgram::CreateBasicTextureShader();
-    
+
     // Create basic geometry
     CreateQuadVAO();
     CreateTexturedQuadVAO();
     CreateCubeVAO();
-    
+
     std::cout << "AGL Renderer initialized successfully!" << std::endl;
 }
 
@@ -84,7 +84,7 @@ void Renderer::DisableWireframe() {
 void Renderer::DrawArrays(const VertexArray& vao, const ShaderProgram& shader, GLenum mode, uint32_t count) {
     shader.Use();
     vao.Bind();
-    
+
     if (count == 0) {
         // Estimate vertex count from first vertex buffer
         const auto& vbs = vao.GetVertexBuffers();
@@ -92,9 +92,9 @@ void Renderer::DrawArrays(const VertexArray& vao, const ShaderProgram& shader, G
             count = static_cast<uint32_t>(vbs[0]->GetSize() / sizeof(float) / 3); // Assume 3 floats per vertex
         }
     }
-    
+
     glDrawArrays(mode, 0, count);
-    
+
     s_stats.drawCalls++;
     s_stats.vertexCount += count;
     if (mode == GL_TRIANGLES) {
@@ -108,12 +108,12 @@ void Renderer::DrawArrays(const VertexArray& vao, const ShaderProgram& shader, G
 void Renderer::DrawElements(const VertexArray& vao, const ShaderProgram& shader, GLenum mode) {
     shader.Use();
     vao.Bind();
-    
+
     auto indexBuffer = vao.GetIndexBuffer();
     if (indexBuffer) {
         uint32_t indexCount = indexBuffer->GetCount();
         glDrawElements(mode, indexCount, GL_UNSIGNED_INT, nullptr);
-        
+
         s_stats.drawCalls++;
         s_stats.vertexCount += indexCount;
         if (mode == GL_TRIANGLES) {
@@ -132,7 +132,7 @@ void Renderer::DrawQuad(const glm::mat4& transform, const glm::vec4& color) {
         s_colorShader->Use();
         s_colorShader->SetUniform("u_MVP", transform);
         s_colorShader->SetUniform("u_Color", color);
-        
+
         DrawElements(*s_quadVAO, *s_colorShader);
     }
 }
@@ -167,66 +167,66 @@ void Renderer::ResetStats() {
 
 void Renderer::CreateQuadVAO() {
     s_quadVAO = VertexArray::Create();
-    
+
     // Create vertex buffer
     auto vertexBuffer = std::make_shared<VertexBuffer>(
-        VertexData::QuadVertices, 
+        VertexData::QuadVertices,
         VertexData::QuadVertexCount * sizeof(float)
     );
-    
+
     // Create index buffer
     auto indexBuffer = std::make_shared<IndexBuffer>(
-        VertexData::QuadIndices, 
+        VertexData::QuadIndices,
         static_cast<uint32_t>(VertexData::QuadIndexCount)
     );
-    
+
     // Set up layout (position only for basic shader)
     VertexBufferLayout layout = VertexBufferLayout::Position3D();
-    
+
     s_quadVAO->AddVertexBuffer(vertexBuffer, layout);
     s_quadVAO->SetIndexBuffer(indexBuffer);
 }
 
 void Renderer::CreateTexturedQuadVAO() {
     s_texturedQuadVAO = VertexArray::Create();
-    
+
     // Create vertex buffer with texture coordinates
     auto vertexBuffer = std::make_shared<VertexBuffer>(
-        VertexData::QuadTexturedVertices, 
+        VertexData::QuadTexturedVertices,
         VertexData::QuadTexturedVertexCount * sizeof(float)
     );
-    
+
     // Create index buffer
     auto indexBuffer = std::make_shared<IndexBuffer>(
-        VertexData::QuadIndices, 
+        VertexData::QuadIndices,
         static_cast<uint32_t>(VertexData::QuadIndexCount)
     );
-    
+
     // Set up layout (position + texture coordinates)
     VertexBufferLayout layout = VertexBufferLayout::PositionTexture3D();
-    
+
     s_texturedQuadVAO->AddVertexBuffer(vertexBuffer, layout);
     s_texturedQuadVAO->SetIndexBuffer(indexBuffer);
 }
 
 void Renderer::CreateCubeVAO() {
     s_cubeVAO = VertexArray::Create();
-    
+
     // Create vertex buffer
     auto vertexBuffer = std::make_shared<VertexBuffer>(
-        VertexData::CubeVertices, 
+        VertexData::CubeVertices,
         VertexData::CubeVertexCount * sizeof(float)
     );
-    
+
     // Create index buffer
     auto indexBuffer = std::make_shared<IndexBuffer>(
-        VertexData::CubeIndices, 
+        VertexData::CubeIndices,
         static_cast<uint32_t>(VertexData::CubeIndexCount)
     );
-    
+
     // Set up layout (position only for basic shader)
     VertexBufferLayout layout = VertexBufferLayout::Position3D();
-    
+
     s_cubeVAO->AddVertexBuffer(vertexBuffer, layout);
     s_cubeVAO->SetIndexBuffer(indexBuffer);
 }
@@ -241,15 +241,15 @@ namespace VertexData {
          0.5f,  0.5f, 0.0f,  // Top-right
         -0.5f,  0.5f, 0.0f   // Top-left
     };
-    
+
     const uint32_t QuadIndices[] = {
         0, 1, 2,  // First triangle
         2, 3, 0   // Second triangle
     };
-    
+
     const size_t QuadVertexCount = sizeof(QuadVertices) / sizeof(float);
     const size_t QuadIndexCount = sizeof(QuadIndices) / sizeof(uint32_t);
-    
+
     // Textured Quad vertices (x, y, z, u, v)
     const float QuadTexturedVertices[] = {
         -0.5f, -0.5f, 0.0f,  0.0f, 0.0f,  // Bottom-left
@@ -257,9 +257,9 @@ namespace VertexData {
          0.5f,  0.5f, 0.0f,  1.0f, 1.0f,  // Top-right
         -0.5f,  0.5f, 0.0f,  0.0f, 1.0f   // Top-left
     };
-    
+
     const size_t QuadTexturedVertexCount = sizeof(QuadTexturedVertices) / sizeof(float);
-    
+
     // Cube vertices (x, y, z) - 8 vertices
     const float CubeVertices[] = {
         // Front face
@@ -267,14 +267,14 @@ namespace VertexData {
          0.5f, -0.5f,  0.5f,  // 1
          0.5f,  0.5f,  0.5f,  // 2
         -0.5f,  0.5f,  0.5f,  // 3
-        
+
         // Back face
         -0.5f, -0.5f, -0.5f,  // 4
          0.5f, -0.5f, -0.5f,  // 5
          0.5f,  0.5f, -0.5f,  // 6
         -0.5f,  0.5f, -0.5f   // 7
     };
-    
+
     const uint32_t CubeIndices[] = {
         // Front face
         0, 1, 2,  2, 3, 0,
@@ -289,7 +289,7 @@ namespace VertexData {
         // Top face
         3, 7, 6,  6, 2, 3
     };
-    
+
     const size_t CubeVertexCount = sizeof(CubeVertices) / sizeof(float);
     const size_t CubeIndexCount = sizeof(CubeIndices) / sizeof(uint32_t);
 }

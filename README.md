@@ -72,11 +72,11 @@ cmake --build . --config Release
 
 int main() {
     agt::Game game;
-    
+
     if (game.Initialize(1024, 768, "My Game")) {
         game.Run();
     }
-    
+
     return 0;
 }
 ```
@@ -94,13 +94,13 @@ public:
             std::cout << "Space pressed!" << std::endl;
         }
     }
-    
+
     void OnRender() override {
         // Custom rendering
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
-    
+
     void OnImGuiRender() override {
         // ImGui interface
         ImGui::Begin("Debug Window");

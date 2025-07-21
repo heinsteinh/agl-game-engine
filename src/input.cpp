@@ -3,7 +3,7 @@
 
 namespace agl {
 
-Input::Input() 
+Input::Input()
     : m_window(nullptr)
     , m_mouseX(0.0)
     , m_mouseY(0.0)
@@ -21,17 +21,17 @@ Input::~Input() {
 
 void Input::Initialize(GLFWwindow* window) {
     m_window = window;
-    
+
     if (m_window) {
         // Set window user pointer for callbacks
         glfwSetWindowUserPointer(m_window, this);
-        
+
         // Set GLFW callbacks
         glfwSetKeyCallback(m_window, GLFWKeyCallback);
         glfwSetMouseButtonCallback(m_window, GLFWMouseButtonCallback);
         glfwSetCursorPosCallback(m_window, GLFWCursorPositionCallback);
         glfwSetScrollCallback(m_window, GLFWScrollCallback);
-        
+
         // Get initial mouse position
         glfwGetCursorPos(m_window, &m_mouseX, &m_mouseY);
         m_previousMouseX = m_mouseX;
@@ -43,13 +43,13 @@ void Input::Update() {
     // Update previous states
     m_previousKeyStates = m_keyStates;
     m_previousMouseButtonStates = m_mouseButtonStates;
-    
+
     // Update mouse delta
     m_mouseDeltaX = m_mouseX - m_previousMouseX;
     m_mouseDeltaY = m_mouseY - m_previousMouseY;
     m_previousMouseX = m_mouseX;
     m_previousMouseY = m_mouseY;
-    
+
     // Reset scroll offset (it's only valid for one frame)
     m_scrollX = 0.0;
     m_scrollY = 0.0;
@@ -84,10 +84,10 @@ bool Input::IsMouseButtonPressed(MouseButton button) const {
     int buttonCode = static_cast<int>(button);
     auto current = m_mouseButtonStates.find(buttonCode);
     auto previous = m_previousMouseButtonStates.find(buttonCode);
-    
+
     bool currentPressed = (current != m_mouseButtonStates.end() && current->second == KeyState::Pressed);
     bool previousPressed = (previous != m_previousMouseButtonStates.end() && previous->second == KeyState::Pressed);
-    
+
     return currentPressed && !previousPressed;
 }
 
@@ -95,10 +95,10 @@ bool Input::IsMouseButtonReleased(MouseButton button) const {
     int buttonCode = static_cast<int>(button);
     auto current = m_mouseButtonStates.find(buttonCode);
     auto previous = m_previousMouseButtonStates.find(buttonCode);
-    
+
     bool currentPressed = (current != m_mouseButtonStates.end() && current->second == KeyState::Pressed);
     bool previousPressed = (previous != m_previousMouseButtonStates.end() && previous->second == KeyState::Pressed);
-    
+
     return !currentPressed && previousPressed;
 }
 
@@ -143,7 +143,7 @@ void Input::GLFWKeyCallback(GLFWwindow* window, int key, int scancode, int actio
     if (input) {
         KeyState state = static_cast<KeyState>(action);
         input->m_keyStates[key] = state;
-        
+
         if (input->m_keyCallback) {
             input->m_keyCallback(key, state);
         }
@@ -155,7 +155,7 @@ void Input::GLFWMouseButtonCallback(GLFWwindow* window, int button, int action, 
     if (input) {
         KeyState state = static_cast<KeyState>(action);
         input->m_mouseButtonStates[button] = state;
-        
+
         if (input->m_mouseButtonCallback) {
             MouseButton mouseButton = static_cast<MouseButton>(button);
             input->m_mouseButtonCallback(mouseButton, state);
@@ -168,7 +168,7 @@ void Input::GLFWCursorPositionCallback(GLFWwindow* window, double xpos, double y
     if (input) {
         input->m_mouseX = xpos;
         input->m_mouseY = ypos;
-        
+
         if (input->m_mouseMoveCallback) {
             input->m_mouseMoveCallback(xpos, ypos);
         }
@@ -180,7 +180,7 @@ void Input::GLFWScrollCallback(GLFWwindow* window, double xoffset, double yoffse
     if (input) {
         input->m_scrollX = xoffset;
         input->m_scrollY = yoffset;
-        
+
         if (input->m_scrollCallback) {
             input->m_scrollCallback(xoffset, yoffset);
         }

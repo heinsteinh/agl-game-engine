@@ -26,7 +26,7 @@ if(SOURCE_FILES)
     target_include_directories(${PROJECT_NAME} PRIVATE
         ${CMAKE_SOURCE_DIR}/include
     )
-    
+
     # Link libraries
     target_link_libraries(${PROJECT_NAME} PRIVATE
         glfw
@@ -34,11 +34,11 @@ if(SOURCE_FILES)
         stb
         imgui
     )
-    
+
     # Find and link OpenGL
     find_package(OpenGL REQUIRED)
     target_link_libraries(${PROJECT_NAME} PRIVATE OpenGL::GL)
-    
+
     # Platform-specific configurations
     if(APPLE)
         target_link_libraries(${PROJECT_NAME} PRIVATE "-framework Cocoa" "-framework IOKit" "-framework CoreVideo")

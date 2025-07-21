@@ -62,20 +62,20 @@ if(imgui_POPULATED AND NOT TARGET imgui)
         ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
         ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
     )
-    
+
     add_library(imgui STATIC ${IMGUI_SOURCES})
-    
-    target_include_directories(imgui PUBLIC 
+
+    target_include_directories(imgui PUBLIC
         ${imgui_SOURCE_DIR}
         ${imgui_SOURCE_DIR}/backends
     )
-    
+
     target_link_libraries(imgui PUBLIC glfw)
-    
+
     # Find OpenGL
     find_package(OpenGL REQUIRED)
     target_link_libraries(imgui PUBLIC OpenGL::GL)
-    
+
     # Platform-specific configurations
     if(WIN32)
         target_compile_definitions(imgui PRIVATE IMGUI_IMPL_OPENGL_LOADER_GLAD)

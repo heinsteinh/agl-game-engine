@@ -71,11 +71,11 @@ namespace agl {
         void AttachShader(const Shader& shader);
         void AttachShader(std::unique_ptr<Shader> shader);
         bool Link();
-        
+
         // Program usage
         void Use() const;
         void Unuse() const;
-        
+
         // Getters
         uint32_t GetID() const { return m_programID; }
         bool IsLinked() const { return m_linked; }
@@ -91,7 +91,7 @@ namespace agl {
         void SetUniform(const std::string& name, const glm::mat2& value);
         void SetUniform(const std::string& name, const glm::mat3& value);
         void SetUniform(const std::string& name, const glm::mat4& value);
-        
+
         // Array uniforms
         void SetUniform(const std::string& name, const std::vector<int>& values);
         void SetUniform(const std::string& name, const std::vector<float>& values);
@@ -104,20 +104,20 @@ namespace agl {
 
         // Static factory methods
         static std::unique_ptr<ShaderProgram> CreateFromFiles(
-            const std::string& vertexPath, 
+            const std::string& vertexPath,
             const std::string& fragmentPath);
-        
+
         static std::unique_ptr<ShaderProgram> CreateFromFiles(
-            const std::string& vertexPath, 
+            const std::string& vertexPath,
             const std::string& fragmentPath,
             const std::string& geometryPath);
-        
+
         static std::unique_ptr<ShaderProgram> CreateFromSources(
-            const std::string& vertexSource, 
+            const std::string& vertexSource,
             const std::string& fragmentSource);
-        
+
         static std::unique_ptr<ShaderProgram> CreateFromSources(
-            const std::string& vertexSource, 
+            const std::string& vertexSource,
             const std::string& fragmentSource,
             const std::string& geometrySource);
 
@@ -131,10 +131,10 @@ namespace agl {
         bool m_linked;
         std::string m_errorLog;
         std::vector<std::unique_ptr<Shader>> m_attachedShaders;
-        
+
         // Uniform location caching
         mutable std::unordered_map<std::string, int> m_uniformLocationCache;
-        
+
         int GetUniformLocation(const std::string& name) const;
         void CheckCompileErrors(uint32_t shader, const std::string& type);
     };
@@ -143,27 +143,27 @@ namespace agl {
     class ShaderManager {
     public:
         static ShaderManager& Instance();
-        
+
         // Load and cache shaders
         std::shared_ptr<ShaderProgram> LoadShader(const std::string& name,
             const std::string& vertexPath, const std::string& fragmentPath);
-        
+
         std::shared_ptr<ShaderProgram> LoadShader(const std::string& name,
             const std::string& vertexPath, const std::string& fragmentPath,
             const std::string& geometryPath);
-        
+
         // Get cached shader
         std::shared_ptr<ShaderProgram> GetShader(const std::string& name);
-        
+
         // Remove shader from cache
         void RemoveShader(const std::string& name);
-        
+
         // Clear all shaders
         void Clear();
 
     private:
         std::unordered_map<std::string, std::shared_ptr<ShaderProgram>> m_shaders;
-        
+
         ShaderManager() = default;
         ~ShaderManager() = default;
         ShaderManager(const ShaderManager&) = delete;

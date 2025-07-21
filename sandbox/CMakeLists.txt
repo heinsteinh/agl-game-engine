@@ -38,7 +38,7 @@ if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${DEMO_SOURCE}")
 endif()
 
 # Create the demo executable
-add_executable(${PROJECT_NAME} 
+add_executable(${PROJECT_NAME}
     ${ENGINE_SOURCES}
     ${DEMO_SOURCE}
 )

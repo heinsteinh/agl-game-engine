@@ -27,7 +27,7 @@ namespace agl {
 
         void Bind() const;
         void Unbind() const;
-        
+
         uint32_t GetID() const { return m_bufferID; }
         size_t GetSize() const { return m_size; }
         GLenum GetTarget() const { return m_target; }
@@ -90,7 +90,7 @@ namespace agl {
 
         void SetData(const void* data, size_t size, GLenum usage = GL_DYNAMIC_DRAW);
         void SetSubData(const void* data, size_t offset, size_t size);
-        
+
         void BindToBindingPoint(uint32_t bindingPoint) const;
         void BindRange(uint32_t bindingPoint, size_t offset, size_t size) const;
 
@@ -106,4 +106,3 @@ namespace agl {
     };
 
 } // namespace agl
-

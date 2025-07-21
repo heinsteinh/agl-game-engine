@@ -58,11 +58,11 @@ public:
     void OnUpdate(float deltaTime) override {
         // Update game logic
     }
-    
+
     void OnRender() override {
         // Render game
     }
-    
+
     void OnImGuiRender() override {
         // Render ImGui interface
     }
@@ -74,7 +74,7 @@ namespace agl {
     class Game;
     class Window;
     class Input;
-    
+
     // Key and mouse constants for convenience
     namespace Keys {
         constexpr int Space = GLFW_KEY_SPACE;

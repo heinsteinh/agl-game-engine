@@ -56,20 +56,20 @@ namespace agl {
 
         // Add vertex attributes
         void Push(const std::string& name, VertexDataType type, uint32_t count, bool normalized = false);
-        
+
         // Convenience methods for common types
         void PushFloat(const std::string& name, uint32_t count = 1) {
             Push(name, VertexDataType::Float, count);
         }
-        
+
         void PushInt(const std::string& name, uint32_t count = 1) {
             Push(name, VertexDataType::Int, count);
         }
-        
+
         void PushUInt(const std::string& name, uint32_t count = 1) {
             Push(name, VertexDataType::UnsignedInt, count);
         }
-        
+
         void PushByte(const std::string& name, uint32_t count = 1, bool normalized = false) {
             Push(name, VertexDataType::UnsignedByte, count, normalized);
         }
@@ -80,27 +80,27 @@ namespace agl {
             layout.PushFloat("a_Position", 3);
             return layout;
         }
-        
+
         static VertexBufferLayout Position2D() {
             VertexBufferLayout layout;
             layout.PushFloat("a_Position", 2);
             return layout;
         }
-        
+
         static VertexBufferLayout PositionTexture2D() {
             VertexBufferLayout layout;
             layout.PushFloat("a_Position", 2);
             layout.PushFloat("a_TexCoord", 2);
             return layout;
         }
-        
+
         static VertexBufferLayout PositionTexture3D() {
             VertexBufferLayout layout;
             layout.PushFloat("a_Position", 3);
             layout.PushFloat("a_TexCoord", 2);
             return layout;
         }
-        
+
         static VertexBufferLayout PositionNormalTexture3D() {
             VertexBufferLayout layout;
             layout.PushFloat("a_Position", 3);
@@ -108,7 +108,7 @@ namespace agl {
             layout.PushFloat("a_TexCoord", 2);
             return layout;
         }
-        
+
         static VertexBufferLayout PositionColorTexture3D() {
             VertexBufferLayout layout;
             layout.PushFloat("a_Position", 3);

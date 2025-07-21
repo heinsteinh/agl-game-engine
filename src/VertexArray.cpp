@@ -29,12 +29,12 @@ VertexArray& VertexArray::operator=(VertexArray&& other) noexcept {
         if (m_vaoID != 0) {
             glDeleteVertexArrays(1, &m_vaoID);
         }
-        
+
         m_vaoID = other.m_vaoID;
         m_vertexBuffers = std::move(other.m_vertexBuffers);
         m_indexBuffer = std::move(other.m_indexBuffer);
         m_vertexBufferIndex = other.m_vertexBufferIndex;
-        
+
         other.m_vaoID = 0;
         other.m_vertexBufferIndex = 0;
     }
@@ -52,9 +52,9 @@ void VertexArray::Unbind() const {
 void VertexArray::AddVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer, const VertexBufferLayout& layout) {
     Bind();
     vertexBuffer->Bind();
-    
+
     SetupVertexAttributes(layout);
-    
+
     m_vertexBuffers.push_back(vertexBuffer);
 }
 
@@ -66,10 +66,10 @@ void VertexArray::SetIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer) {
 
 void VertexArray::SetupVertexAttributes(const VertexBufferLayout& layout) {
     const auto& elements = layout.GetElements();
-    
+
     for (const auto& element : elements) {
         glEnableVertexAttribArray(m_vertexBufferIndex);
-        
+
         glVertexAttribPointer(
             m_vertexBufferIndex,
             element.count,
@@ -78,7 +78,7 @@ void VertexArray::SetupVertexAttributes(const VertexBufferLayout& layout) {
             layout.GetStride(),
             reinterpret_cast<const void*>(element.offset)
         );
-        
+
         m_vertexBufferIndex++;
     }
 }

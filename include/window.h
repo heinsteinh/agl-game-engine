@@ -15,7 +15,7 @@ namespace agl {
 
         bool Create(int width, int height, const char* title);
         void Destroy();
-        
+
         void SwapBuffers();
         void PollEvents();
         bool ShouldClose() const;

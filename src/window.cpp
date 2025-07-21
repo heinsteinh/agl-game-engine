@@ -20,12 +20,12 @@ Window::~Window() {
 
 void Window::Initialize() {
     glfwSetErrorCallback(ErrorCallback);
-    
+
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW" << std::endl;
         return;
     }
-    
+
     // Set OpenGL version and profile
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);

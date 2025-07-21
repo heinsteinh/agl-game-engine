@@ -101,7 +101,7 @@ if [ -z "$DEMO_NAME" ]; then
     done
     echo ""
     read -p "Enter demo number (1-${#DEMOS[@]}): " choice
-    
+
     if [[ "$choice" =~ ^[1-9][0-9]*$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le "${#DEMOS[@]}" ]; then
         DEMO_NAME="${DEMOS[$((choice-1))]}"
     else

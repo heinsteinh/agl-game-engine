@@ -35,13 +35,13 @@ Buffer& Buffer::operator=(Buffer&& other) noexcept {
         if (m_bufferID != 0) {
             glDeleteBuffers(1, &m_bufferID);
         }
-        
+
         // Move data
         m_bufferID = other.m_bufferID;
         m_target = other.m_target;
         m_size = other.m_size;
         m_usage = other.m_usage;
-        
+
         // Reset other
         other.m_bufferID = 0;
         other.m_target = 0;
@@ -73,7 +73,7 @@ void Buffer::CreateBuffer(GLenum target) {
 void Buffer::SetData(const void* data, size_t size, GLenum usage) {
     m_size = size;
     m_usage = usage;
-    
+
     Bind();
     glBufferData(m_target, size, data, usage);
 }
