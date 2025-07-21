@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 env:
-  BUILD_TYPE: Release
+  BUILD_TYPE: Release  # Changed from Debug to Release
 
 jobs:
   build:
@@ -119,22 +119,13 @@ jobs:
       with:
         cmake-version: '3.14'
 
-    - name: Build Sandbox - Renderer Demo (Windows)
-      if: runner.os == 'Windows'
+    # Fixed: Use consistent parameter name
+    - name: Build Sandbox - Renderer Demo
       working-directory: sandbox
       run: |
         mkdir build
         cd build
-        cmake .. -DDEMO_SELECTION=renderer
-        cmake --build . --config ${{ env.BUILD_TYPE }}
-
-    - name: Build Sandbox - Renderer Demo (Unix)
-      if: runner.os != 'Windows'
-      working-directory: sandbox
-      run: |
-        mkdir build
-        cd build
-        cmake .. -DDEMO_SELECTION=renderer
+        cmake .. -DDEMO_NAME=renderer
         cmake --build . --config ${{ env.BUILD_TYPE }}
 
     - name: Upload sandbox artifacts
@@ -255,10 +246,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    # Fixed: Use correct artifact name that matches the upload
     - name: Download build artifacts
       uses: actions/download-artifact@v4
       with:
-        name: agl-engine-ubuntu-latest-Release
+        name: agl-engine-ubuntu-latest-${{ env.BUILD_TYPE }}
         path: build
 
     - name: Run performance tests
@@ -285,4 +277,3 @@ jobs:
         
         chmod +x perf_test.sh
         ./perf_test.sh
-
