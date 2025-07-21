@@ -3,7 +3,14 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <GL/gl.h>
+
+#if defined(__APPLE__)
+    #define GL_SILENCE_DEPRECATION
+    #include <OpenGL/gl3.h>
+#else
+    #include <GL/gl.h>
+#endif
+
 
 namespace agl {
 
