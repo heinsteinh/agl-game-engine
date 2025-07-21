@@ -15,7 +15,8 @@ public:
         , m_regenerateRandom(false) {
     }
 
-    bool Initialize(int width = 1024, int height = 768, const char* title = "AGL Texture Demo") override {
+    bool Initialize(int width = 1024, int height = 768, const char* title = "AGL Texture Demo")
+     {
         if (!agl::Game::Initialize(width, height, title)) {
             return false;
         }
@@ -86,7 +87,7 @@ public:
 
         // Regenerate random texture if requested
         if (m_regenerateRandom) {
-            m_textures[1] = agl::Texture2D::CreateRandomColor(256, 256);
+            m_textures[1] = agl::Texture2D::CreateRandomColorTexture(256, 256);
             m_regenerateRandom = false;
         }
 
@@ -186,7 +187,7 @@ public:
         agl::Renderer::ResetStats();
     }
 
-    void Shutdown() override {
+    void Shutdown() {
         // Clean up resources
         m_textures.clear();
         m_shader.reset();
@@ -222,10 +223,10 @@ private:
 
     void CreateTextures() {
         // 1. Solid red texture
-        m_textures.push_back(agl::Texture2D::CreateSolidColor(64, 64, 1.0f, 0.2f, 0.2f, 1.0f));
+        m_textures.push_back(agl::Texture2D::CreateSolidColorTexture(64, 64, 1.0f, 0.2f, 0.2f, 1.0f));
 
         // 2. Random color texture (256x256)
-        m_textures.push_back(agl::Texture2D::CreateRandomColor(256, 256));
+        m_textures.push_back(agl::Texture2D::CreateRandomColorTexture(256, 256));
 
         // 3. Checkerboard texture
         auto checkerboard = std::make_unique<agl::Texture2D>();
@@ -276,7 +277,7 @@ private:
     }
 };
 
-int main() {
+int main_TextureDemo() {
     std::cout << "Starting AGL Texture Demo..." << std::endl;
 
     TextureDemo demo;

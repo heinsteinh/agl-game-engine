@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Buffer.h"
+#include "buffer.h"
 #include "VertexBufferLayout.h"
 #include <memory>
 

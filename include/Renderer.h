@@ -3,7 +3,7 @@
 // AGL Renderer - Main header file for the AGL rendering system
 // Include this file to get access to all rendering components
 
-#include "Buffer.h"
+#include "buffer.h"
 #include "VertexBufferLayout.h"
 #include "VertexArray.h"
 #include "Shader.h"

@@ -367,7 +367,7 @@ std::unique_ptr<Texture2D> Texture2D::Create(uint32_t width, uint32_t height, Te
     return texture;
 }
 
-std::unique_ptr<Texture2D> Texture2D::LoadFromFile(const std::string& filepath) {
+std::unique_ptr<Texture2D> Texture2D::LoadFromFileStatic(const std::string& filepath) {
     auto texture = std::make_unique<Texture2D>();
     if (texture->LoadFromFile(filepath)) {
         return texture;
@@ -375,26 +375,26 @@ std::unique_ptr<Texture2D> Texture2D::LoadFromFile(const std::string& filepath) 
     return nullptr;
 }
 
-std::unique_ptr<Texture2D> Texture2D::CreateSolidColor(uint32_t width, uint32_t height,
-                                                      float r, float g, float b, float a) {
+std::unique_ptr<Texture2D> Texture2D::CreateSolidColorTexture(uint32_t width, uint32_t height,
+                                                          float r, float g, float b, float a) {
     auto texture = std::make_unique<Texture2D>();
     texture->CreateSolidColor(width, height, r, g, b, a);
     return texture;
 }
 
-std::unique_ptr<Texture2D> Texture2D::CreateRandomColor(uint32_t width, uint32_t height,
-                                                       uint32_t seed, float alpha) {
+std::unique_ptr<Texture2D> Texture2D::CreateRandomColorTexture(uint32_t width, uint32_t height,
+                                                           uint32_t seed, float alpha) {
     auto texture = std::make_unique<Texture2D>();
     texture->CreateRandomColor(width, height, seed, alpha);
     return texture;
 }
 
 std::unique_ptr<Texture2D> Texture2D::CreateWhite(uint32_t size) {
-    return CreateSolidColor(size, size, 1.0f, 1.0f, 1.0f, 1.0f);
+    return CreateSolidColorTexture(size, size, 1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 std::unique_ptr<Texture2D> Texture2D::CreateBlack(uint32_t size) {
-    return CreateSolidColor(size, size, 0.0f, 0.0f, 0.0f, 1.0f);
+    return CreateSolidColorTexture(size, size, 0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 // ===== TextureManager Class =====
@@ -419,7 +419,7 @@ std::shared_ptr<Texture2D> TextureManager::LoadTexture(const std::string& name, 
         return it->second;
     }
 
-    auto texture = Texture2D::LoadFromFile(filepath);
+    auto texture = Texture2D::LoadFromFileStatic(filepath);
     if (texture) {
         auto sharedTexture = std::shared_ptr<Texture2D>(texture.release());
         m_textures[name] = sharedTexture;
@@ -437,7 +437,7 @@ std::shared_ptr<Texture2D> TextureManager::CreateSolidColorTexture(const std::st
         return it->second;
     }
 
-    auto texture = Texture2D::CreateSolidColor(width, height, r, g, b, a);
+    auto texture = Texture2D::CreateSolidColorTexture(width, height, r, g, b, a);
     if (texture) {
         auto sharedTexture = std::shared_ptr<Texture2D>(texture.release());
         m_textures[name] = sharedTexture;
@@ -455,7 +455,7 @@ std::shared_ptr<Texture2D> TextureManager::CreateRandomColorTexture(const std::s
         return it->second;
     }
 
-    auto texture = Texture2D::CreateRandomColor(width, height, seed, alpha);
+    auto texture = Texture2D::CreateRandomColorTexture(width, height, seed, alpha);
     if (texture) {
         auto sharedTexture = std::shared_ptr<Texture2D>(texture.release());
         m_textures[name] = sharedTexture;

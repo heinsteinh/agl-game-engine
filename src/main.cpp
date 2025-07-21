@@ -12,9 +12,7 @@
     #include <GL/gl.h>
 #endif
 
-// STB is header-only, include what you need
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+
 
 // Custom game class that extends the base Game class
 class MyGame : public agl::Game {
@@ -66,7 +64,7 @@ private:
     float m_rotation;
 };
 
-int main() {
+int main_MyGame() {
     std::cout << "Initializing AGT Game Engine..." << std::endl;
 
     // Test GLM (showing it works)

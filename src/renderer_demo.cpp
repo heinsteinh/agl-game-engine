@@ -10,10 +10,17 @@ class RendererDemo : public agl::Game {
 public:
     RendererDemo()
         : m_rotation(0.0f)
-        , m_wireframeMode(false) {
+        , m_wireframeMode(false)
+        , m_cameraDistance(5.0f)
+        , m_cameraYaw(0.0f)
+        , m_cameraPitch(0.0f)
+        , m_lastMouseX(0.0)
+        , m_lastMouseY(0.0)
+        , m_firstMouse(true)
+        , m_mouseLookEnabled(false) {
     }
 
-    bool Initialize(int width = 1024, int height = 768, const char* title = "AGL Renderer Demo") override {
+    bool Initialize(int width = 1024, int height = 768, const char* title = "AGL Renderer Demo") {
         if (!agl::Game::Initialize(width, height, title)) {
             return false;
         }
@@ -63,6 +70,15 @@ public:
                 agl::Renderer::DisableWireframe();
             }
         }
+
+        // Toggle mouse look with right mouse button
+        if (GetInput()->IsMouseButtonPressed(agl::MouseButton::Right)) {
+            m_mouseLookEnabled = !m_mouseLookEnabled;
+            m_firstMouse = true; // Reset to avoid jumpy camera
+        }
+
+        // Handle camera controls
+        HandleCameraInput(deltaTime);
 
         // Update matrices
         UpdateMatrices();
@@ -120,7 +136,18 @@ public:
         ImGui::Separator();
         ImGui::Text("Controls:");
         ImGui::Text("TAB - Toggle wireframe mode");
+        ImGui::Text("Right Mouse - Toggle mouse look");
+        ImGui::Text("W/S - Zoom in/out");
+        ImGui::Text("Mouse Wheel - Zoom in/out");
+        ImGui::Text("R - Reset camera");
         ImGui::Text("Wireframe: %s", m_wireframeMode ? "ON" : "OFF");
+        ImGui::Text("Mouse Look: %s", m_mouseLookEnabled ? "ON" : "OFF");
+
+        ImGui::Separator();
+        ImGui::Text("Camera Info:");
+        ImGui::Text("Distance: %.2f", m_cameraDistance);
+        ImGui::Text("Yaw: %.1f°", m_cameraYaw);
+        ImGui::Text("Pitch: %.1f°", m_cameraPitch);
 
         ImGui::Separator();
         ImGui::Text("Objects:");
@@ -134,7 +161,7 @@ public:
         agl::Renderer::ResetStats();
     }
 
-    void Shutdown() override {
+    void Shutdown() {
         // Clean up renderer resources
         m_shader.reset();
         m_triangleVA.reset();
@@ -161,17 +188,91 @@ private:
     float m_rotation;
     bool m_wireframeMode;
 
+    // Camera control
+    float m_cameraDistance;
+    float m_cameraYaw;
+    float m_cameraPitch;
+    double m_lastMouseX;
+    double m_lastMouseY;
+    bool m_firstMouse;
+    bool m_mouseLookEnabled;
+
     void UpdateMatrices() {
         // Perspective projection
         float aspect = static_cast<float>(GetWindow()->GetWidth()) / static_cast<float>(GetWindow()->GetHeight());
         m_projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
 
+        // Calculate camera position using spherical coordinates
+        float x = m_cameraDistance * cos(glm::radians(m_cameraPitch)) * cos(glm::radians(m_cameraYaw));
+        float y = m_cameraDistance * sin(glm::radians(m_cameraPitch));
+        float z = m_cameraDistance * cos(glm::radians(m_cameraPitch)) * sin(glm::radians(m_cameraYaw));
+
+        glm::vec3 cameraPos(x, y, z);
+
         // View matrix (camera)
         m_view = glm::lookAt(
-            glm::vec3(0.0f, 0.0f, 5.0f),   // Camera position
+            cameraPos,                      // Camera position
             glm::vec3(0.0f, 0.0f, 0.0f),   // Look at origin
             glm::vec3(0.0f, 1.0f, 0.0f)    // Up vector
         );
+    }
+
+    void HandleCameraInput(float deltaTime) {
+        // Handle mouse look
+        if (m_mouseLookEnabled) {
+            double mouseX, mouseY;
+            GetInput()->GetMousePosition(mouseX, mouseY);
+
+            if (m_firstMouse) {
+                m_lastMouseX = mouseX;
+                m_lastMouseY = mouseY;
+                m_firstMouse = false;
+            }
+
+            double deltaX = mouseX - m_lastMouseX;
+            double deltaY = m_lastMouseY - mouseY; // Reversed since y-coordinates go from bottom to top
+
+            m_lastMouseX = mouseX;
+            m_lastMouseY = mouseY;
+
+            // Camera sensitivity
+            float sensitivity = 0.1f;
+            deltaX *= sensitivity;
+            deltaY *= sensitivity;
+
+            m_cameraYaw += static_cast<float>(deltaX);
+            m_cameraPitch += static_cast<float>(deltaY);
+
+            // Constrain pitch to prevent camera flipping
+            if (m_cameraPitch > 89.0f) m_cameraPitch = 89.0f;
+            if (m_cameraPitch < -89.0f) m_cameraPitch = -89.0f;
+        }
+
+        // Handle scroll wheel zoom
+        double scrollX, scrollY;
+        GetInput()->GetScrollOffset(scrollX, scrollY);
+        if (scrollY != 0.0) {
+            m_cameraDistance -= static_cast<float>(scrollY) * 0.5f;
+        }
+
+        // Handle keyboard input for camera distance (zoom)
+        if (GetInput()->IsKeyHeld(GLFW_KEY_W)) {
+            m_cameraDistance -= deltaTime * 5.0f; // Zoom in
+        }
+        if (GetInput()->IsKeyHeld(GLFW_KEY_S)) {
+            m_cameraDistance += deltaTime * 5.0f; // Zoom out
+        }
+
+        // Constrain camera distance
+        if (m_cameraDistance < 1.0f) m_cameraDistance = 1.0f;
+        if (m_cameraDistance > 20.0f) m_cameraDistance = 20.0f;
+
+        // Reset camera with R key
+        if (GetInput()->IsKeyPressed(GLFW_KEY_R)) {
+            m_cameraDistance = 5.0f;
+            m_cameraYaw = 0.0f;
+            m_cameraPitch = 0.0f;
+        }
     }
 };
 

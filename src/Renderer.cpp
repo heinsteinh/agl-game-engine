@@ -3,6 +3,71 @@
 
 namespace agl {
 
+
+    // ===== VertexData Namespace =====
+
+namespace VertexData {
+    // Quad vertices (x, y, z)
+    const float QuadVertices[] = {
+        -0.5f, -0.5f, 0.0f,  // Bottom-left
+         0.5f, -0.5f, 0.0f,  // Bottom-right
+         0.5f,  0.5f, 0.0f,  // Top-right
+        -0.5f,  0.5f, 0.0f   // Top-left
+    };
+
+    const uint32_t QuadIndices[] = {
+        0, 1, 2,  // First triangle
+        2, 3, 0   // Second triangle
+    };
+
+    const size_t QuadVertexCount = sizeof(QuadVertices) / sizeof(float);
+    const size_t QuadIndexCount = sizeof(QuadIndices) / sizeof(uint32_t);
+
+    // Textured Quad vertices (x, y, z, u, v)
+    const float QuadTexturedVertices[] = {
+        -0.5f, -0.5f, 0.0f,  0.0f, 0.0f,  // Bottom-left
+         0.5f, -0.5f, 0.0f,  1.0f, 0.0f,  // Bottom-right
+         0.5f,  0.5f, 0.0f,  1.0f, 1.0f,  // Top-right
+        -0.5f,  0.5f, 0.0f,  0.0f, 1.0f   // Top-left
+    };
+
+    const size_t QuadTexturedVertexCount = sizeof(QuadTexturedVertices) / sizeof(float);
+
+    // Cube vertices (x, y, z) - 8 vertices
+    const float CubeVertices[] = {
+        // Front face
+        -0.5f, -0.5f,  0.5f,  // 0
+         0.5f, -0.5f,  0.5f,  // 1
+         0.5f,  0.5f,  0.5f,  // 2
+        -0.5f,  0.5f,  0.5f,  // 3
+
+        // Back face
+        -0.5f, -0.5f, -0.5f,  // 4
+         0.5f, -0.5f, -0.5f,  // 5
+         0.5f,  0.5f, -0.5f,  // 6
+        -0.5f,  0.5f, -0.5f   // 7
+    };
+
+    const uint32_t CubeIndices[] = {
+        // Front face
+        0, 1, 2,  2, 3, 0,
+        // Back face
+        4, 5, 6,  6, 7, 4,
+        // Left face
+        7, 3, 0,  0, 4, 7,
+        // Right face
+        1, 5, 6,  6, 2, 1,
+        // Bottom face
+        4, 0, 1,  1, 5, 4,
+        // Top face
+        3, 7, 6,  6, 2, 3
+    };
+
+    const size_t CubeVertexCount = sizeof(CubeVertices) / sizeof(float);
+    const size_t CubeIndexCount = sizeof(CubeIndices) / sizeof(uint32_t);
+}
+
+
 // ===== Renderer Class =====
 
 Renderer::RenderStats Renderer::s_stats;
@@ -101,9 +166,7 @@ void Renderer::DrawArrays(const VertexArray& vao, const ShaderProgram& shader, G
         s_stats.triangleCount += count / 3;
     }
 }
-        s_stats.triangleCount += count / 3;
-    }
-}
+
 
 void Renderer::DrawElements(const VertexArray& vao, const ShaderProgram& shader, GLenum mode) {
     shader.Use();
@@ -192,14 +255,14 @@ void Renderer::CreateTexturedQuadVAO() {
 
     // Create vertex buffer with texture coordinates
     auto vertexBuffer = std::make_shared<VertexBuffer>(
-        VertexData::QuadTexturedVertices,
-        VertexData::QuadTexturedVertexCount * sizeof(float)
+        agl::VertexData::QuadTexturedVertices,
+        agl::VertexData::QuadTexturedVertexCount * sizeof(float)
     );
 
     // Create index buffer
     auto indexBuffer = std::make_shared<IndexBuffer>(
-        VertexData::QuadIndices,
-        static_cast<uint32_t>(VertexData::QuadIndexCount)
+        agl::VertexData::QuadIndices,
+        static_cast<uint32_t>(agl::VertexData::QuadIndexCount)
     );
 
     // Set up layout (position + texture coordinates)
@@ -231,67 +294,5 @@ void Renderer::CreateCubeVAO() {
     s_cubeVAO->SetIndexBuffer(indexBuffer);
 }
 
-// ===== VertexData Namespace =====
-
-namespace VertexData {
-    // Quad vertices (x, y, z)
-    const float QuadVertices[] = {
-        -0.5f, -0.5f, 0.0f,  // Bottom-left
-         0.5f, -0.5f, 0.0f,  // Bottom-right
-         0.5f,  0.5f, 0.0f,  // Top-right
-        -0.5f,  0.5f, 0.0f   // Top-left
-    };
-
-    const uint32_t QuadIndices[] = {
-        0, 1, 2,  // First triangle
-        2, 3, 0   // Second triangle
-    };
-
-    const size_t QuadVertexCount = sizeof(QuadVertices) / sizeof(float);
-    const size_t QuadIndexCount = sizeof(QuadIndices) / sizeof(uint32_t);
-
-    // Textured Quad vertices (x, y, z, u, v)
-    const float QuadTexturedVertices[] = {
-        -0.5f, -0.5f, 0.0f,  0.0f, 0.0f,  // Bottom-left
-         0.5f, -0.5f, 0.0f,  1.0f, 0.0f,  // Bottom-right
-         0.5f,  0.5f, 0.0f,  1.0f, 1.0f,  // Top-right
-        -0.5f,  0.5f, 0.0f,  0.0f, 1.0f   // Top-left
-    };
-
-    const size_t QuadTexturedVertexCount = sizeof(QuadTexturedVertices) / sizeof(float);
-
-    // Cube vertices (x, y, z) - 8 vertices
-    const float CubeVertices[] = {
-        // Front face
-        -0.5f, -0.5f,  0.5f,  // 0
-         0.5f, -0.5f,  0.5f,  // 1
-         0.5f,  0.5f,  0.5f,  // 2
-        -0.5f,  0.5f,  0.5f,  // 3
-
-        // Back face
-        -0.5f, -0.5f, -0.5f,  // 4
-         0.5f, -0.5f, -0.5f,  // 5
-         0.5f,  0.5f, -0.5f,  // 6
-        -0.5f,  0.5f, -0.5f   // 7
-    };
-
-    const uint32_t CubeIndices[] = {
-        // Front face
-        0, 1, 2,  2, 3, 0,
-        // Back face
-        4, 5, 6,  6, 7, 4,
-        // Left face
-        7, 3, 0,  0, 4, 7,
-        // Right face
-        1, 5, 6,  6, 2, 1,
-        // Bottom face
-        4, 0, 1,  1, 5, 4,
-        // Top face
-        3, 7, 6,  6, 2, 3
-    };
-
-    const size_t CubeVertexCount = sizeof(CubeVertices) / sizeof(float);
-    const size_t CubeIndexCount = sizeof(CubeIndices) / sizeof(uint32_t);
-}
 
 } // namespace agl
