@@ -33,7 +33,7 @@ jobs:
                 libxcursor-dev \
                 libxi-dev
           - os: windows-latest
-            generator: "Visual Studio 17 2022"
+            generator: "Visual Studio 16 2019"
             install_deps: ""
           - os: macos-latest
             generator: "Unix Makefiles"
@@ -59,7 +59,7 @@ jobs:
       if: runner.os == 'Windows'
       working-directory: build
       run: |
-        cmake .. -G "${{ matrix.generator }}" -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_INSTALL_PREFIX=install
+        cmake .. -G "${{ matrix.generator }}" -A x64 -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_INSTALL_PREFIX=install
 
     - name: Configure CMake (Unix)
       if: runner.os != 'Windows'
@@ -278,23 +278,23 @@ jobs:
       run: |
         # Make executable if needed
         chmod +x build/bin/* || true
-        
+
         # Create a simple performance test script
         cat > perf_test.sh << 'EOF'
         #!/bin/bash
         echo "Running basic performance tests..."
-        
+
         # Test build time (already built, so this is informational)
         echo "Build completed successfully"
-        
+
         # Test memory usage (if we had actual tests)
         echo "Memory usage tests would go here"
-        
+
         # Test startup time (if we had actual executable tests)
         echo "Startup time tests would go here"
-        
+
         echo "Performance tests completed"
         EOF
-        
+
         chmod +x perf_test.sh
         ./perf_test.sh
