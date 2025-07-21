@@ -33,7 +33,7 @@ jobs:
                 libxcursor-dev \
                 libxi-dev
           - os: windows-latest
-            generator: "Visual Studio 17 2022"
+            generator: "Visual Studio 16 2019"
             install_deps: ""
           - os: macos-latest
             generator: "Unix Makefiles"
