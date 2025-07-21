@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SHADER_H
+#define SHADER_H
 
 #include <string>
 #include <vector>
@@ -172,3 +173,5 @@ namespace agl {
     };
 
 } // namespace agl
+
+#endif // SHADER_H

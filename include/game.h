@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GAME_H
+#define GAME_H
 
 #include "window.h"
 #include "input.h"
@@ -32,3 +33,5 @@ namespace agl {
         void CalculateDeltaTime();
     };
 }
+
+#endif // GAME_H

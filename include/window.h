@@ -1,4 +1,5 @@
-#pragma once
+#ifndef WINDOW_H
+#define WINDOW_H
 
 #include <GLFW/glfw3.h>
 #include <string>
@@ -56,3 +57,5 @@ namespace agl {
         static void ErrorCallback(int error, const char* description);
     };
 }
+
+#endif // WINDOW_H

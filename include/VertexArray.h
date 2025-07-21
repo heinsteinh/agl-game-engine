@@ -1,4 +1,5 @@
-#pragma once
+#ifndef VERTEX_ARRAY_H
+#define VERTEX_ARRAY_H
 
 #include "buffer.h"
 #include "VertexBufferLayout.h"
@@ -57,3 +58,5 @@ namespace agl {
     };
 
 } // namespace agl
+
+#endif // VERTEX_ARRAY_H

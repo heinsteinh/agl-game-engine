@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RENDERER_H
+#define RENDERER_H
 
 // AGL Renderer - Main header file for the AGL rendering system
 // Include this file to get access to all rendering components
@@ -94,3 +95,5 @@ namespace agl {
     }
 
 } // namespace agl
+
+#endif // RENDERER_H

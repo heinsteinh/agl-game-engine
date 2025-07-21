@@ -1,4 +1,3 @@
-
 # Setup basic c++17 cross-platform for game engine project with FetchContent dependencies
 cmake_minimum_required(VERSION 3.14)  # FetchContent requires 3.14+
 project(TutoFromBook VERSION 1.0 LANGUAGES CXX)
@@ -45,6 +44,9 @@ if(SOURCE_FILES)
     elseif(UNIX AND NOT APPLE)
         target_link_libraries(${PROJECT_NAME} PRIVATE X11 Xrandr Xinerama Xcursor GL dl pthread)
     endif()
+
+    # Define GL_GLEXT_PROTOTYPES to enable OpenGL function declarations
+    target_compile_definitions(${PROJECT_NAME} PRIVATE GL_GLEXT_PROTOTYPES)
 else()
     message(WARNING "No source files found in src/ directory")
 endif()

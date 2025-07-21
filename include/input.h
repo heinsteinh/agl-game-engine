@@ -1,4 +1,5 @@
-#pragma once
+#ifndef INPUT_H
+#define INPUT_H
 
 #include <GLFW/glfw3.h>
 #include <unordered_map>
@@ -92,3 +93,5 @@ namespace agl {
         static void GLFWScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
     };
 }
+
+#endif // INPUT_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef VERTEX_BUFFER_LAYOUT_H
+#define VERTEX_BUFFER_LAYOUT_H
 
 #include <vector>
 #include <string>
@@ -140,3 +141,5 @@ namespace agl {
     };
 
 } // namespace agl
+
+#endif // VERTEX_BUFFER_LAYOUT_H

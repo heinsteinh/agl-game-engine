@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TEXTURE_H
+#define TEXTURE_H
 
 #include <cstdint>
 #include <string>
@@ -82,7 +83,7 @@ namespace agl {
         void SetFilter(TextureFilter minFilter, TextureFilter magFilter);
         void SetWrap(TextureWrap wrapS, TextureWrap wrapT);
         void SetBorderColor(float r, float g, float b, float a = 1.0f);
-        
+
         // Generate mipmaps
         void GenerateMipmaps();
 
@@ -104,27 +105,27 @@ namespace agl {
         ~Texture2D() = default;
 
         // Create texture from data
-        void CreateFromData(uint32_t width, uint32_t height, 
-                          TextureFormat format, TextureDataType dataType, 
+        void CreateFromData(uint32_t width, uint32_t height,
+                          TextureFormat format, TextureDataType dataType,
                           const void* data = nullptr);
 
         // Create texture from file
         bool LoadFromFile(const std::string& filepath, bool flipVertically = true);
 
         // Update texture data
-        void SetData(const void* data, uint32_t x = 0, uint32_t y = 0, 
+        void SetData(const void* data, uint32_t x = 0, uint32_t y = 0,
                     uint32_t width = 0, uint32_t height = 0);
 
         // Create colored texture
-        void CreateSolidColor(uint32_t width, uint32_t height, 
+        void CreateSolidColor(uint32_t width, uint32_t height,
                             float r, float g, float b, float a = 1.0f);
 
         // Create random color texture
-        void CreateRandomColor(uint32_t width, uint32_t height, 
+        void CreateRandomColor(uint32_t width, uint32_t height,
                              uint32_t seed = 0, float alpha = 1.0f);
 
         // Create checkerboard pattern
-        void CreateCheckerboard(uint32_t width, uint32_t height, 
+        void CreateCheckerboard(uint32_t width, uint32_t height,
                               uint32_t checkerSize = 32,
                               float color1R = 1.0f, float color1G = 1.0f, float color1B = 1.0f,
                               float color2R = 0.0f, float color2G = 0.0f, float color2B = 0.0f);
@@ -139,7 +140,7 @@ namespace agl {
                           bool horizontal = true);
 
         // Static factory methods
-        static std::unique_ptr<Texture2D> Create(uint32_t width, uint32_t height, 
+        static std::unique_ptr<Texture2D> Create(uint32_t width, uint32_t height,
                                                TextureFormat format = TextureFormat::RGBA);
         static std::unique_ptr<Texture2D> LoadFromFileStatic(const std::string& filepath);
         static std::unique_ptr<Texture2D> CreateSolidColorTexture(uint32_t width, uint32_t height, float r, float g, float b, float a = 1.0f);
@@ -149,11 +150,11 @@ namespace agl {
 
     private:
         TextureDataType m_dataType;
-        
+
         // Helper methods
-        std::vector<uint8_t> GenerateRandomColorData(uint32_t width, uint32_t height, 
+        std::vector<uint8_t> GenerateRandomColorData(uint32_t width, uint32_t height,
                                                    uint32_t seed, float alpha);
-        std::vector<uint8_t> GenerateCheckerboardData(uint32_t width, uint32_t height, 
+        std::vector<uint8_t> GenerateCheckerboardData(uint32_t width, uint32_t height,
                                                      uint32_t checkerSize,
                                                      float color1R, float color1G, float color1B,
                                                      float color2R, float color2G, float color2B);
@@ -171,12 +172,12 @@ namespace agl {
 
         // Load and cache texture
         std::shared_ptr<Texture2D> LoadTexture(const std::string& name, const std::string& filepath);
-        
+
         // Create and cache procedural texture
-        std::shared_ptr<Texture2D> CreateSolidColorTexture(const std::string& name, 
+        std::shared_ptr<Texture2D> CreateSolidColorTexture(const std::string& name,
                                                          uint32_t width, uint32_t height,
                                                          float r, float g, float b, float a = 1.0f);
-        
+
         std::shared_ptr<Texture2D> CreateRandomColorTexture(const std::string& name,
                                                           uint32_t width, uint32_t height,
                                                           uint32_t seed = 0, float alpha = 1.0f);
@@ -208,3 +209,5 @@ namespace agl {
     };
 
 } // namespace agl
+
+#endif // TEXTURE_H

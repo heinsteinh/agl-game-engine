@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <GL/gl.h>
 
 namespace agl {
 

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef AGL_H
+#define AGL_H
 
 // AGL Game Engine - Example usage header
 // This demonstrates how to use the encapsulated window and input systems
@@ -90,3 +91,5 @@ namespace agl {
         constexpr int Right = GLFW_KEY_RIGHT;
     }
 }
+
+#endif // AGL_H

@@ -1,5 +1,5 @@
-
-#pragma once
+#ifndef BUFFER_H
+#define BUFFER_H
 
 #include <cstdint>
 #include <vector>
@@ -106,3 +106,5 @@ namespace agl {
     };
 
 } // namespace agl
+
+#endif // BUFFER_H
