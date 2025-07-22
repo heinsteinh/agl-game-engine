@@ -9,10 +9,10 @@ namespace agl {
 
     void Logger::Initialize() {
         std::vector<spdlog::sink_ptr> logSinks;
-        
+
         // Console sink with color
         logSinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
-        
+
         // File sink
         logSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("agl-engine.log", true));
 

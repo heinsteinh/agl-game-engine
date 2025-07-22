@@ -34,7 +34,7 @@ namespace agl {
         std::unique_ptr<Window> m_window;
         std::unique_ptr<Input> m_input;
         bool m_running;
-        
+
         // Timing variables
         float m_lastFrameTime;
         float m_deltaTime;
@@ -42,7 +42,7 @@ namespace agl {
         float m_averageDeltaTime;
         float m_frameTimeAccumulator;
         int m_frameCount;
-        
+
         // Timing configuration
         static constexpr float MAX_DELTA_TIME = 1.0f / 20.0f; // Cap at 20 FPS minimum
         static constexpr float FPS_UPDATE_INTERVAL = 1.0f;    // Update FPS every second

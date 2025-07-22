@@ -47,7 +47,7 @@ void OnUpdate(float deltaTime) override {
 void OnUpdate(float deltaTime) override {
     static float timer = 0.0f;
     timer += deltaTime;
-    
+
     if (timer >= 1.0f) { // Every second
         DoSomething();
         timer = 0.0f;

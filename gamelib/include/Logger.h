@@ -14,7 +14,7 @@ namespace agl {
 
         // Get the core logger
         static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
-        
+
         // Get the client logger
         static std::shared_ptr<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
 

@@ -17,8 +17,8 @@
 namespace agl {
 
 Game::Game()
-    : m_running(false), 
-      m_lastFrameTime(0.0f), 
+    : m_running(false),
+      m_lastFrameTime(0.0f),
       m_deltaTime(0.0f),
       m_fps(0.0f),
       m_averageDeltaTime(0.0f),
@@ -33,9 +33,9 @@ Game::~Game() {
 bool Game::Initialize(int width, int height, const char* title) {
     // Initialize Logger first
     Logger::Initialize();
-    
+
     AGL_CORE_INFO("Initializing AGL Game Engine...");
-    
+
     // Initialize GLFW
     Window::Initialize();
 
@@ -128,7 +128,7 @@ void Game::Run() {
         {
             ImGui::Begin("AGT Game Engine");
             ImGui::Text("Game Engine is running!");
-            
+
             // Enhanced timing information
             ImGui::Separator();
             ImGui::Text("Timing Information:");
@@ -136,14 +136,14 @@ void Game::Run() {
             ImGui::Text("Current Delta Time: %.3f ms", m_deltaTime * 1000.0f);
             ImGui::Text("Average Delta Time: %.3f ms", m_averageDeltaTime * 1000.0f);
             ImGui::Text("ImGui FPS: %.1f", ImGui::GetIO().Framerate);
-            
+
             // Frame time graph
             static float frameTimeHistory[100] = {0};
             static int frameTimeOffset = 0;
             frameTimeHistory[frameTimeOffset] = m_deltaTime * 1000.0f;
             frameTimeOffset = (frameTimeOffset + 1) % 100;
-            
-            ImGui::PlotLines("Frame Time (ms)", frameTimeHistory, 100, frameTimeOffset, 
+
+            ImGui::PlotLines("Frame Time (ms)", frameTimeHistory, 100, frameTimeOffset,
                             nullptr, 0.0f, MAX_DELTA_TIME * 1000.0f, ImVec2(0, 80));
 
             ImGui::Separator();
@@ -200,7 +200,7 @@ void Game::Shutdown() {
         Window::Terminate();
 
         AGL_CORE_INFO("Game shutdown complete.");
-        
+
         // Shutdown logger last
         Logger::Shutdown();
     }
@@ -208,32 +208,32 @@ void Game::Shutdown() {
 
 void Game::CalculateDeltaTime() {
     float currentTime = static_cast<float>(glfwGetTime());
-    
+
     // Calculate raw delta time
     float rawDeltaTime = currentTime - m_lastFrameTime;
     m_lastFrameTime = currentTime;
-    
+
     // Clamp delta time to prevent large spikes (spiral of death)
     m_deltaTime = std::min(rawDeltaTime, MAX_DELTA_TIME);
-    
+
     // Accumulate frame time for FPS calculation
     m_frameTimeAccumulator += rawDeltaTime;
     m_frameCount++;
-    
+
     // Update FPS and average delta time every second
     if (m_frameTimeAccumulator >= FPS_UPDATE_INTERVAL) {
         m_averageDeltaTime = m_frameTimeAccumulator / m_frameCount;
         m_fps = static_cast<float>(m_frameCount) / m_frameTimeAccumulator;
-        
+
         // Reset accumulator
         m_frameTimeAccumulator = 0.0f;
         m_frameCount = 0;
-        
+
         // Log FPS info occasionally (every 5 seconds)
         static float fpsLogTimer = 0.0f;
         fpsLogTimer += FPS_UPDATE_INTERVAL;
         if (fpsLogTimer >= 5.0f) {
-            AGL_CORE_TRACE("FPS: {:.1f}, Avg Delta: {:.3f}ms, Current Delta: {:.3f}ms", 
+            AGL_CORE_TRACE("FPS: {:.1f}, Avg Delta: {:.3f}ms, Current Delta: {:.3f}ms",
                           m_fps, m_averageDeltaTime * 1000.0f, m_deltaTime * 1000.0f);
             fpsLogTimer = 0.0f;
         }

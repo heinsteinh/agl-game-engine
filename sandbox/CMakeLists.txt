@@ -23,7 +23,7 @@ endif()
 add_executable(${PROJECT_NAME} ${DEMO_SOURCE})
 
 # Set the target name based on demo
-set_target_properties(${PROJECT_NAME} PROPERTIES 
+set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME "agl_${DEMO_NAME}_demo"
 )
 
@@ -40,7 +40,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/assets")
     file(GLOB_RECURSE ASSETS "${CMAKE_CURRENT_SOURCE_DIR}/assets/*")
     if(ASSETS)
-        file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/assets 
+        file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/assets
              DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
         message(STATUS "Copied assets to build directory")
     endif()
