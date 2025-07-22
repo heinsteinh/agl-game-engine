@@ -35,13 +35,13 @@ if(TARGET gamelib)
 else()
     # Standalone build: add gamelib as subdirectory
     message(STATUS "Standalone build: adding gamelib as subdirectory")
-    
+
     # Include parent project dependencies
     include(../Dependency.cmake)
-    
+
     # Add gamelib
     add_subdirectory(../gamelib gamelib_build)
-    
+
     # Link the gamelib library
     target_link_libraries(${PROJECT_NAME} PRIVATE gamelib)
 endif()
