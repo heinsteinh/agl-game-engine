@@ -11,8 +11,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/Host/bin)
+set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/Host/lib)
+set(INCLUDE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/Host/include)
+
+
 # Add dependency management first
-include(Dependency.cmake)
+include(cmake/Dependency.cmake)
 
 # Add subdirectories
 add_subdirectory(gamelib)

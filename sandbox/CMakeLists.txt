@@ -6,6 +6,10 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+
+include_directories(${INCLUDE_OUTPUT_PATH})
+link_directories(${LIBRARY_OUTPUT_PATH})
+
 # Demo selection option
 set(DEMO_NAME "renderer" CACHE STRING "Name of the demo to build")
 set_property(CACHE DEMO_NAME PROPERTY STRINGS "renderer" "texture" "benchmark_deltatime" "example_logger")
@@ -45,7 +49,7 @@ else()
         message(STATUS "Standalone build: adding gamelib as subdirectory")
 
         # Include parent project dependencies
-        include(../Dependency.cmake)
+        include(../cmake/Dependency.cmake)
 
         # Add gamelib
         add_subdirectory(../gamelib gamelib_build)

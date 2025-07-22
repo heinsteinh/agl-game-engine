@@ -8,6 +8,10 @@ list(FILTER GAMELIB_SOURCES EXCLUDE REGEX "main\\.cpp$")
 # Collect all header files
 file(GLOB_RECURSE GAMELIB_HEADERS "include/*.h")
 
+
+include_directories(${INCLUDE_OUTPUT_PATH})
+
+
 # Create the static library
 add_library(gamelib STATIC ${GAMELIB_SOURCES} ${GAMELIB_HEADERS})
 
