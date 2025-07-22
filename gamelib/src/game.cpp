@@ -1,5 +1,6 @@
 #include "game.h"
 #include <chrono>
+#include <algorithm>
 #include <GLFW/glfw3.h>
 
 #if defined(__APPLE__)
@@ -16,7 +17,13 @@
 namespace agl {
 
 Game::Game()
-    : m_running(false), m_lastFrameTime(0.0f) {
+    : m_running(false), 
+      m_lastFrameTime(0.0f), 
+      m_deltaTime(0.0f),
+      m_fps(0.0f),
+      m_averageDeltaTime(0.0f),
+      m_frameTimeAccumulator(0.0f),
+      m_frameCount(0) {
 }
 
 Game::~Game() {
@@ -104,7 +111,7 @@ void Game::Run() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Update game logic
-        OnUpdate(m_lastFrameTime);
+        OnUpdate(m_deltaTime);
 
         // Render game
         OnRender();
@@ -121,8 +128,29 @@ void Game::Run() {
         {
             ImGui::Begin("AGT Game Engine");
             ImGui::Text("Game Engine is running!");
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
-                       1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            
+            // Enhanced timing information
+            ImGui::Separator();
+            ImGui::Text("Timing Information:");
+            ImGui::Text("Current FPS: %.1f", m_fps);
+            ImGui::Text("Current Delta Time: %.3f ms", m_deltaTime * 1000.0f);
+            ImGui::Text("Average Delta Time: %.3f ms", m_averageDeltaTime * 1000.0f);
+            ImGui::Text("ImGui FPS: %.1f", ImGui::GetIO().Framerate);
+            
+            // Frame time graph
+            static float frameTimeHistory[100] = {0};
+            static int frameTimeOffset = 0;
+            frameTimeHistory[frameTimeOffset] = m_deltaTime * 1000.0f;
+            frameTimeOffset = (frameTimeOffset + 1) % 100;
+            
+            ImGui::PlotLines("Frame Time (ms)", frameTimeHistory, 100, frameTimeOffset, 
+                            nullptr, 0.0f, MAX_DELTA_TIME * 1000.0f, ImVec2(0, 80));
+
+            ImGui::Separator();
+            ImGui::Text("Input Information:");
+
+            ImGui::Separator();
+            ImGui::Text("Input Information:");
 
             // Display input info
             double mouseX, mouseY;
@@ -180,8 +208,36 @@ void Game::Shutdown() {
 
 void Game::CalculateDeltaTime() {
     float currentTime = static_cast<float>(glfwGetTime());
-    m_lastFrameTime = currentTime - m_lastFrameTime;
+    
+    // Calculate raw delta time
+    float rawDeltaTime = currentTime - m_lastFrameTime;
     m_lastFrameTime = currentTime;
+    
+    // Clamp delta time to prevent large spikes (spiral of death)
+    m_deltaTime = std::min(rawDeltaTime, MAX_DELTA_TIME);
+    
+    // Accumulate frame time for FPS calculation
+    m_frameTimeAccumulator += rawDeltaTime;
+    m_frameCount++;
+    
+    // Update FPS and average delta time every second
+    if (m_frameTimeAccumulator >= FPS_UPDATE_INTERVAL) {
+        m_averageDeltaTime = m_frameTimeAccumulator / m_frameCount;
+        m_fps = static_cast<float>(m_frameCount) / m_frameTimeAccumulator;
+        
+        // Reset accumulator
+        m_frameTimeAccumulator = 0.0f;
+        m_frameCount = 0;
+        
+        // Log FPS info occasionally (every 5 seconds)
+        static float fpsLogTimer = 0.0f;
+        fpsLogTimer += FPS_UPDATE_INTERVAL;
+        if (fpsLogTimer >= 5.0f) {
+            AGL_CORE_TRACE("FPS: {:.1f}, Avg Delta: {:.3f}ms, Current Delta: {:.3f}ms", 
+                          m_fps, m_averageDeltaTime * 1000.0f, m_deltaTime * 1000.0f);
+            fpsLogTimer = 0.0f;
+        }
+    }
 }
 
 }
