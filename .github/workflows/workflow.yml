@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest] # Removed windows-latest to disable Windows builds
         include:
           - os: ubuntu-latest
             generator: "Unix Makefiles"
@@ -32,9 +32,6 @@ jobs:
                 libxinerama-dev \
                 libxcursor-dev \
                 libxi-dev
-          - os: windows-latest
-            generator: "Visual Studio 16 2019"
-            install_deps: ""
           - os: macos-latest
             generator: "Unix Makefiles"
             install_deps: ""
@@ -55,12 +52,6 @@ jobs:
     - name: Create build directory
       run: mkdir build
 
-    - name: Configure CMake (Windows)
-      if: runner.os == 'Windows'
-      working-directory: build
-      run: |
-        cmake .. -G "${{ matrix.generator }}" -A x64 -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_INSTALL_PREFIX=install
-
     - name: Configure CMake (Unix)
       if: runner.os != 'Windows'
       working-directory: build
@@ -70,20 +61,10 @@ jobs:
           -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
           -DCMAKE_INSTALL_PREFIX=install
 
-    - name: Build project (Windows)
-      if: runner.os == 'Windows'
-      working-directory: build
-      run: cmake --build . --config ${{ env.BUILD_TYPE }} --parallel 2
-
     - name: Build project (Unix)
       if: runner.os != 'Windows'
       working-directory: build
       run: cmake --build . --parallel 2
-
-    - name: Install project (Windows)
-      if: runner.os == 'Windows'
-      working-directory: build
-      run: cmake --install . --config ${{ env.BUILD_TYPE }}
 
     - name: Install project (Unix)
       if: runner.os != 'Windows'
@@ -106,7 +87,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest]
 
     steps:
     - name: Checkout code
@@ -131,15 +112,6 @@ jobs:
       uses: jwlawson/actions-setup-cmake@v1.14
       with:
         cmake-version: '3.14'
-
-    - name: Build Sandbox - Renderer Demo (Windows)
-      if: runner.os == 'Windows'
-      working-directory: sandbox
-      run: |
-        mkdir build
-        cd build
-        cmake .. -DDEMO_NAME=renderer
-        cmake --build . --config ${{ env.BUILD_TYPE }}
 
     - name: Build Sandbox - Renderer Demo (Unix)
       if: runner.os != 'Windows'
