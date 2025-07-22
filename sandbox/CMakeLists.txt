@@ -27,8 +27,24 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME "agl_${DEMO_NAME}_demo"
 )
 
-# Link the gamelib library (this automatically includes all dependencies)
-target_link_libraries(${PROJECT_NAME} PRIVATE gamelib)
+# Check if gamelib target exists (when built as part of main project)
+if(TARGET gamelib)
+    # Link the gamelib library (this automatically includes all dependencies)
+    target_link_libraries(${PROJECT_NAME} PRIVATE gamelib)
+    message(STATUS "Using gamelib target from parent project")
+else()
+    # Standalone build: add gamelib as subdirectory
+    message(STATUS "Standalone build: adding gamelib as subdirectory")
+    
+    # Include parent project dependencies
+    include(../Dependency.cmake)
+    
+    # Add gamelib
+    add_subdirectory(../gamelib gamelib_build)
+    
+    # Link the gamelib library
+    target_link_libraries(${PROJECT_NAME} PRIVATE gamelib)
+endif()
 
 # Additional include directories for demo-specific code
 target_include_directories(${PROJECT_NAME} PRIVATE
