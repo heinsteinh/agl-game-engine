@@ -62,6 +62,13 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_definitions(gamelib PUBLIC AGL_DEBUG=1)
 endif()
 
+# Export targets for find_package
+install(TARGETS gamelib EXPORT gamelib-targets
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+)
+
 message(STATUS "=== AGL GameLib Configuration ===")
 message(STATUS "Library: gamelib (static)")
 message(STATUS "Sources: ${GAMELIB_SOURCES}")

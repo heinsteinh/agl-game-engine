@@ -33,17 +33,26 @@ if(TARGET gamelib)
     target_link_libraries(${PROJECT_NAME} PRIVATE gamelib)
     message(STATUS "Using gamelib target from parent project")
 else()
-    # Standalone build: add gamelib as subdirectory
-    message(STATUS "Standalone build: adding gamelib as subdirectory")
+    # Try to find pre-built gamelib first
+    find_package(agl-gamelib QUIET)
+    
+    if(agl-gamelib_FOUND)
+        # Use pre-built gamelib library
+        target_link_libraries(${PROJECT_NAME} PRIVATE AGL::gamelib)
+        message(STATUS "Using pre-built gamelib from: ${agl-gamelib_DIR}")
+    else()
+        # Fallback: Standalone build by adding gamelib as subdirectory
+        message(STATUS "Standalone build: adding gamelib as subdirectory")
 
-    # Include parent project dependencies
-    include(../Dependency.cmake)
+        # Include parent project dependencies
+        include(../Dependency.cmake)
 
-    # Add gamelib
-    add_subdirectory(../gamelib gamelib_build)
+        # Add gamelib
+        add_subdirectory(../gamelib gamelib_build)
 
-    # Link the gamelib library
-    target_link_libraries(${PROJECT_NAME} PRIVATE gamelib)
+        # Link the gamelib library
+        target_link_libraries(${PROJECT_NAME} PRIVATE gamelib)
+    endif()
 endif()
 
 # Additional include directories for demo-specific code

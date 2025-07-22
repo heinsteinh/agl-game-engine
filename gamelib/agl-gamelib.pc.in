@@ -1,0 +1,11 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: AGL GameLib
+Description: A modern C++ game engine library with OpenGL rendering
+Version: @PROJECT_VERSION@
+Requires: glfw3 opengl
+Libs: -L${libdir} -lagl_gamelib
+Cflags: -I${includedir}/agl
