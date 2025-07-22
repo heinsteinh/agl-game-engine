@@ -18,12 +18,12 @@ jobs:
     - name: Check for CMake dependency updates
       run: |
         echo "Checking current dependency versions in Dependency.cmake..."
-        
+
         # Extract current versions
         echo "Current GLFW version: $(grep -oP 'GIT_TAG\s+\K[^\s]+' Dependency.cmake | head -1 || echo 'Not found')"
         echo "Current GLM version: $(grep -oP 'GIT_TAG\s+\K[^\s]+' Dependency.cmake | sed -n '2p' || echo 'Not found')"
         echo "Current ImGui version: $(grep -oP 'GIT_TAG\s+\K[^\s]+' Dependency.cmake | tail -1 || echo 'Not found')"
-        
+
         # Check GitHub releases for updates (this would need more sophisticated scripting)
         echo "Manual dependency version checking would go here"
         echo "Consider using tools like Renovate or Dependabot for automated updates"

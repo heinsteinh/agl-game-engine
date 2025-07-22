@@ -43,7 +43,7 @@ read -p "Push to GitHub now? (y/n): " push_now
 if [[ $push_now == "y" || $push_now == "Y" ]]; then
     echo "Pushing to GitHub..."
     git push -u origin main
-    
+
     if [ $? -eq 0 ]; then
         echo ""
         echo "🎉 Success! Your project is now on GitHub:"
