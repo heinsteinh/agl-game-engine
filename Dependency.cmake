@@ -37,8 +37,16 @@ FetchContent_Declare(
     GIT_PROGRESS TRUE
 )
 
+# spdlog - Fast C++ logging library
+FetchContent_Declare(
+    spdlog
+    GIT_REPOSITORY https://github.com/gabime/spdlog.git
+    GIT_TAG v1.12.0
+    GIT_PROGRESS TRUE
+)
+
 # Make dependencies available
-FetchContent_MakeAvailable(glfw glm stb imgui)
+FetchContent_MakeAvailable(glfw glm stb imgui spdlog)
 
 # Configure GLFW options
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)

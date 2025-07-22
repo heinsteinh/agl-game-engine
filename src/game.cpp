@@ -1,5 +1,4 @@
 #include "game.h"
-#include <iostream>
 #include <chrono>
 #include <GLFW/glfw3.h>
 
@@ -25,13 +24,18 @@ Game::~Game() {
 }
 
 bool Game::Initialize(int width, int height, const char* title) {
+    // Initialize Logger first
+    Logger::Initialize();
+    
+    AGL_CORE_INFO("Initializing AGL Game Engine...");
+    
     // Initialize GLFW
     Window::Initialize();
 
     // Create window
     m_window = std::make_unique<Window>();
     if (!m_window->Create(width, height, title)) {
-        std::cerr << "Failed to create window" << std::endl;
+        AGL_CORE_ERROR("Failed to create window");
         return false;
     }
 
@@ -72,20 +76,20 @@ bool Game::Initialize(int width, int height, const char* title) {
         }
     });
 
-    std::cout << "Game initialized successfully!" << std::endl;
+    AGL_CORE_INFO("Game initialized successfully!");
     return true;
 }
 
 void Game::Run() {
     if (!m_window || !m_input) {
-        std::cerr << "Game not properly initialized!" << std::endl;
+        AGL_CORE_ERROR("Game not properly initialized!");
         return;
     }
 
     m_running = true;
     m_lastFrameTime = static_cast<float>(glfwGetTime());
 
-    std::cout << "Starting game loop..." << std::endl;
+    AGL_CORE_INFO("Starting game loop...");
 
     while (m_running && !m_window->ShouldClose()) {
         // Calculate delta time
@@ -150,7 +154,7 @@ void Game::Run() {
         m_window->SwapBuffers();
     }
 
-    std::cout << "Game loop ended." << std::endl;
+    AGL_CORE_INFO("Game loop ended.");
 }
 
 void Game::Shutdown() {
@@ -167,7 +171,10 @@ void Game::Shutdown() {
         // Terminate GLFW
         Window::Terminate();
 
-        std::cout << "Game shutdown complete." << std::endl;
+        AGL_CORE_INFO("Game shutdown complete.");
+        
+        // Shutdown logger last
+        Logger::Shutdown();
     }
 }
 

@@ -32,6 +32,7 @@ if(SOURCE_FILES)
         glm::glm
         stb
         imgui
+        spdlog::spdlog
     )
 
     # Find and link OpenGL

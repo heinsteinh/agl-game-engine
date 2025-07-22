@@ -3,6 +3,7 @@
 
 #include "window.h"
 #include "input.h"
+#include "Logger.h"
 #include <memory>
 
 namespace agl {
