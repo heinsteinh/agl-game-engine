@@ -11,7 +11,7 @@ A modern C++17 cross-platform game engine built with OpenGL, GLFW, ImGui, and sp
 - **🎯 Modern C++17**: Uses modern C++ features including RAII, smart pointers, and move semantics
 - **🔄 Cross-platform support**: Linux, macOS (Windows support planned)
 - **🎨 OpenGL 3.3+**: Modern programmable pipeline with comprehensive abstractions
-- **📦 Modular Architecture**: GameLib library + Sandbox demo applications
+- **📦 Modular Architecture**: GameLib library + 8 standardized standalone demo applications
 - **🎮 Complete Systems**: Window, Input, Renderer, Texture, Shader, and Buffer management
 - **🔗 Signal/Slot System**: Type-safe, decoupled event handling for modern game architecture
 - **⚡ DispatchQueue System**: Thread-safe task scheduling and execution for responsive gameplay
@@ -51,17 +51,17 @@ gamelib/                    # Core game engine library
     ├── Renderer.cpp
     └── ...
 
-sandbox/                   # Demo applications
-├── src/                   # Demo source files
+sandbox/                   # Demo applications (8 standardized demos)
+├── src/                   # Demo source files (each with main() function)
 │   ├── renderer_demo.cpp         # Basic OpenGL rendering
 │   ├── shooter_camera_demo.cpp   # Advanced camera system
 │   ├── advanced_renderer_demo.cpp # Camera comparison demo
 │   ├── signalslot_demo.cpp       # Signal/Slot event system demo
 │   ├── dispatchqueue_demo.cpp    # DispatchQueue threading demo
-│   ├── texture_demo.cpp
-│   ├── example_logger_demo.cpp
-│   └── benchmark_deltatime_demo.cpp
-└── CMakeLists.txt        # Sandbox build configuration
+│   ├── texture_demo.cpp          # Texture loading and management
+│   ├── example_logger_demo.cpp   # Logging system demonstration
+│   └── benchmark_deltatime_demo.cpp # Performance benchmarking
+└── CMakeLists.txt        # Flexible build system supporting individual demos
 
 .github/workflows/         # CI/CD pipeline
 ├── workflow.yml          # Main workflow
@@ -81,6 +81,8 @@ All dependencies are automatically fetched using CMake FetchContent:
 - **📝 spdlog 1.12.0** - Fast C++ logging library with multiple sinks
 
 ## 🚀 Quick Start
+
+> **🆕 Recent Updates**: All demo applications have been standardized with consistent `main()` functions and can now be built as individual standalone executables. The Signal/Slot and DispatchQueue systems are fully integrated and tested.
 
 ### Prerequisites
 - **CMake 3.14+**
@@ -108,36 +110,58 @@ cmake --build build --parallel
 
 ### Running Individual Demos
 
-The sandbox executable contains multiple demos, each with different main functions:
-- `main()` - Enhanced renderer demo with camera controls
-- `main_shooter_camera()` - Advanced camera system for shooters
-- `main_advanced_renderer()` - Comparison between old and new camera systems
-- `main_signalslot()` - Signal/Slot event system demonstration
-- `main_dispatchqueue()` - DispatchQueue threading and task scheduling
-- `main_Texture()` - Texture loading and management demo
-- `main_logger()` - Logging system demonstration
-- `main_Benchmark()` - Performance and delta time benchmarking
+Each demo is now a standalone executable that can be built and run individually:
+
+**Available Demo Applications:**
+- **`renderer_demo`** - Enhanced renderer demo with camera controls and OpenGL primitives
+- **`signalslot_demo`** - Signal/Slot event system demonstration with input/window events
+- **`dispatchqueue_demo`** - DispatchQueue threading and task scheduling examples
+- **`shooter_camera_demo`** - Advanced camera system for shooter games
+- **`advanced_renderer_demo`** - Comparison between camera systems and rendering techniques
+- **`texture_demo`** - Texture loading and management demonstration
+- **`example_logger_demo`** - Logging system with core/client separation
+- **`benchmark_deltatime_demo`** - Performance and delta time benchmarking
 ```
 
-#### Option 2: Standalone Demo Build
-Build individual demos with automatic gamelib dependency:
+#### Option 2: Sandbox Multi-Demo Build
+Build all demos in a single sandbox executable:
 
 ```bash
 cd sandbox
 
-# Build all demos in sandbox
+# Build all demos in sandbox (default: renderer demo)
 cmake -B demo_build -DCMAKE_BUILD_TYPE=Release
 cmake --build demo_build --parallel
-./demo_build/bin/sandbox  # Main executable with multiple demos
+./demo_build/bin/sandbox  # Runs the default demo
+```
 
-# Build specific demos individually
-cmake -B build_signalslot -DDEMO_NAME=signalslot_demo
+#### Build Individual Demos
+Build specific demos as standalone executables:
+
+```bash
+cd sandbox
+
+# Build Signal/Slot demo
+cmake -B build_signalslot -DDEMO_NAME=signalslot
 cmake --build build_signalslot
 ./build_signalslot/agl_signalslot_demo
 
-cmake -B build_dispatchqueue -DDEMO_NAME=dispatchqueue_demo  
+# Build DispatchQueue demo  
+cmake -B build_dispatchqueue -DDEMO_NAME=dispatchqueue
 cmake --build build_dispatchqueue
 ./build_dispatchqueue/agl_dispatchqueue_demo
+
+# Build Renderer demo
+cmake -B build_renderer -DDEMO_NAME=renderer
+cmake --build build_renderer
+./build_renderer/agl_renderer_demo
+
+# Build other demos (replace DEMO_NAME as needed)
+# Available: signalslot, dispatchqueue, renderer, shooter_camera, 
+#           advanced_renderer, texture, example_logger, benchmark_deltatime
+cmake -B build_demo -DDEMO_NAME=<demo_name>
+cmake --build build_demo
+```
 ```
 
 #### Option 3: GameLib Only
@@ -739,6 +763,12 @@ if (game.Initialize(1280, 720, "My Game")) {
 
 **Build Errors with Camera System**
 - Ensure you're including the correct header: `#include "agl.h"`
+
+**Demo Compilation Issues**
+- **Missing main() function**: All demos now use standardized `main()` functions
+- **Wrong demo name**: Use exact demo names without `_demo` suffix in `DEMO_NAME` parameter
+- **Example**: Use `-DDEMO_NAME=signalslot` not `-DDEMO_NAME=signalslot_demo`
+- **Available demos**: `signalslot`, `dispatchqueue`, `renderer`, `shooter_camera`, `advanced_renderer`, `texture`, `example_logger`, `benchmark_deltatime`
 - Make sure CMake has found and built the new camera source files
 - Clean and rebuild: `rm -rf build && cmake -B build && cmake --build build`
 
