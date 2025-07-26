@@ -112,7 +112,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        demo: [renderer, shooter_camera, advanced_renderer, texture, benchmark_deltatime, example_logger]
+        demo: [renderer, signalslot, dispatchqueue, shooter_camera, advanced_renderer, texture, example_logger, benchmark_deltatime]
 
     steps:
     - name: Checkout code
