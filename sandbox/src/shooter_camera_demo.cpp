@@ -373,7 +373,7 @@ private:
 };
 
 
-int main_shooter() {
+int main() {
 
     ShooterCameraDemo demo;
 

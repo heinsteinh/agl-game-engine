@@ -401,7 +401,7 @@ private:
     }
 };
 
-int main_renderer() {
+int main() {
     RendererDemo demo;
 
     if (demo.Initialize(1280, 720, "AGL Renderer Demo - Modern OpenGL Showcase")) {

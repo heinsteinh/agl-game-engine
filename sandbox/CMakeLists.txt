@@ -4,70 +4,85 @@ cmake_minimum_required(VERSION 3.14)
 include_directories(${INCLUDE_OUTPUT_PATH})
 link_directories(${LIBRARY_OUTPUT_PATH})
 
-# Collect sandbox source files
-file(GLOB_RECURSE SANDBOX_SOURCES
-    "src/*.cpp"
-    "src/*.c"
+# Determine which demo to build
+if(NOT DEMO_NAME)
+    set(DEMO_NAME "renderer" CACHE STRING "Name of demo to build")
+endif()
+
+# Set demo source file
+set(DEMO_SOURCE "src/${DEMO_NAME}_demo.cpp")
+
+# Check if demo source exists
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${DEMO_SOURCE}")
+    message(FATAL_ERROR "Demo source file '${DEMO_SOURCE}' not found!")
+endif()
+
+# Create executable for the specific demo
+add_executable(agl_${DEMO_NAME}_demo
+    ${DEMO_SOURCE}
 )
 
-file(GLOB_RECURSE SANDBOX_HEADERS
-    "src/*.h"
-    "src/*.hpp"
-)
-
-# Create sandbox executable
+# Also create a generic 'sandbox' target that points to the chosen demo
 add_executable(sandbox
-    ${SANDBOX_SOURCES}
-    ${SANDBOX_HEADERS}
+    ${DEMO_SOURCE}
 )
 
-# Set target properties
-set_target_properties(sandbox PROPERTIES
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED ON
-    CXX_EXTENSIONS OFF
-)
+# Set target properties for both executables
+foreach(target agl_${DEMO_NAME}_demo sandbox)
+    set_target_properties(${target} PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED ON
+        CXX_EXTENSIONS OFF
+    )
 
-
-# Include directories
-target_include_directories(sandbox PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
-)
+    # Include directories
+    target_include_directories(${target} PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+    )
+endforeach()
 
 # Link gamelib
-target_link_libraries(sandbox PRIVATE
-    gamelib
-)
+foreach(target agl_${DEMO_NAME}_demo sandbox)
+    target_link_libraries(${target} PRIVATE gamelib)
+endforeach()
 
 # Copy assets and resources
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/assets")
-    add_custom_command(TARGET sandbox POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/assets
-        $<TARGET_FILE_DIR:sandbox>/assets
-    )
+    foreach(target agl_${DEMO_NAME}_demo sandbox)
+        add_custom_command(TARGET ${target} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_CURRENT_SOURCE_DIR}/assets
+            $<TARGET_FILE_DIR:${target}>/assets
+        )
+    endforeach()
 endif()
 
 # Copy imgui.ini if it exists
 if(EXISTS "${CMAKE_SOURCE_DIR}/imgui.ini")
-    add_custom_command(TARGET sandbox POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${CMAKE_SOURCE_DIR}/imgui.ini
-        $<TARGET_FILE_DIR:sandbox>/imgui.ini
-    )
+    foreach(target agl_${DEMO_NAME}_demo sandbox)
+        add_custom_command(TARGET ${target} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${CMAKE_SOURCE_DIR}/imgui.ini
+            $<TARGET_FILE_DIR:${target}>/imgui.ini
+        )
+    endforeach()
 endif()
 
 # Visual Studio specific settings
 if(WIN32 AND CMAKE_GENERATOR MATCHES "Visual Studio")
-    set_target_properties(sandbox PROPERTIES
-        VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>"
-    )
+    foreach(target agl_${DEMO_NAME}_demo sandbox)
+        set_target_properties(${target} PROPERTIES
+            VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>"
+        )
+    endforeach()
 endif()
 
 # Check if gamelib target exists (when built as part of main project)
 if(TARGET gamelib)
     # Link the gamelib library (this automatically includes all dependencies)
-    target_link_libraries(sandbox PRIVATE gamelib)
+    foreach(target agl_${DEMO_NAME}_demo sandbox)
+        target_link_libraries(${target} PRIVATE gamelib)
+    endforeach()
     message(STATUS "Using gamelib target from parent project")
 else()
     # Try to find pre-built gamelib first
@@ -75,7 +90,9 @@ else()
 
     if(agl-gamelib_FOUND)
         # Use pre-built gamelib library
-        target_link_libraries(sandbox PRIVATE AGL::gamelib)
+        foreach(target agl_${DEMO_NAME}_demo sandbox)
+            target_link_libraries(${target} PRIVATE AGL::gamelib)
+        endforeach()
         message(STATUS "Using pre-built gamelib from: ${agl-gamelib_DIR}")
     else()
         # Fallback: Standalone build by adding gamelib as subdirectory
@@ -88,15 +105,19 @@ else()
         add_subdirectory(../gamelib gamelib_build)
 
         # Link the gamelib library
-        target_link_libraries(sandbox PRIVATE gamelib)
+        foreach(target agl_${DEMO_NAME}_demo sandbox)
+            target_link_libraries(${target} PRIVATE gamelib)
+        endforeach()
     endif()
 endif()
 
 # Additional include directories for demo-specific code
-target_include_directories(sandbox PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
+foreach(target agl_${DEMO_NAME}_demo sandbox)
+    target_include_directories(${target} PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+    )
+endforeach()
 
 # Copy assets to build directory if they exist
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/assets")
@@ -110,9 +131,11 @@ endif()
 
 # Set debug working directory for Visual Studio
 if(WIN32)
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
-    )
+    foreach(target agl_${DEMO_NAME}_demo sandbox)
+        set_target_properties(${target} PROPERTIES
+            VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
+        )
+    endforeach()
 endif()
 
 # Display build information

@@ -13,7 +13,9 @@ A modern C++17 cross-platform game engine built with OpenGL, GLFW, ImGui, and sp
 - **🎨 OpenGL 3.3+**: Modern programmable pipeline with comprehensive abstractions
 - **📦 Modular Architecture**: GameLib library + Sandbox demo applications
 - **🎮 Complete Systems**: Window, Input, Renderer, Texture, Shader, and Buffer management
-- **� Advanced Camera System**: First-person, third-person, spectator modes with shooter game features
+- **🔗 Signal/Slot System**: Type-safe, decoupled event handling for modern game architecture
+- **⚡ DispatchQueue System**: Thread-safe task scheduling and execution for responsive gameplay
+- **📹 Advanced Camera System**: First-person, third-person, spectator modes with shooter game features
 - **🎯 Shooter Game Ready**: Sprint, crouch, aim, camera shake, dynamic FOV, and mouse look
 - **�🖥️ ImGui Integration**: Real-time debugging and UI development
 - **📝 Advanced Logging**: Comprehensive spdlog integration with core/client separation
@@ -31,6 +33,8 @@ gamelib/                    # Core game engine library
 │   ├── game.h            # Game loop and timing
 │   ├── window.h          # Window management
 │   ├── input.h           # Input handling
+│   ├── SigSlot.h         # Signal/Slot event system
+│   ├── DispatchQueue.h   # Thread-safe task scheduling
 │   ├── Camera.h          # 3D camera system
 │   ├── CameraController.h # Advanced camera control
 │   ├── Renderer.h        # OpenGL renderer
@@ -52,6 +56,8 @@ sandbox/                   # Demo applications
 │   ├── renderer_demo.cpp         # Basic OpenGL rendering
 │   ├── shooter_camera_demo.cpp   # Advanced camera system
 │   ├── advanced_renderer_demo.cpp # Camera comparison demo
+│   ├── signalslot_demo.cpp       # Signal/Slot event system demo
+│   ├── dispatchqueue_demo.cpp    # DispatchQueue threading demo
 │   ├── texture_demo.cpp
 │   ├── example_logger_demo.cpp
 │   └── benchmark_deltatime_demo.cpp
@@ -106,6 +112,8 @@ The sandbox executable contains multiple demos, each with different main functio
 - `main()` - Enhanced renderer demo with camera controls
 - `main_shooter_camera()` - Advanced camera system for shooters
 - `main_advanced_renderer()` - Comparison between old and new camera systems
+- `main_signalslot()` - Signal/Slot event system demonstration
+- `main_dispatchqueue()` - DispatchQueue threading and task scheduling
 - `main_Texture()` - Texture loading and management demo
 - `main_logger()` - Logging system demonstration
 - `main_Benchmark()` - Performance and delta time benchmarking
@@ -121,6 +129,15 @@ cd sandbox
 cmake -B demo_build -DCMAKE_BUILD_TYPE=Release
 cmake --build demo_build --parallel
 ./demo_build/bin/sandbox  # Main executable with multiple demos
+
+# Build specific demos individually
+cmake -B build_signalslot -DDEMO_NAME=signalslot_demo
+cmake --build build_signalslot
+./build_signalslot/agl_signalslot_demo
+
+cmake -B build_dispatchqueue -DDEMO_NAME=dispatchqueue_demo  
+cmake --build build_dispatchqueue
+./build_dispatchqueue/agl_dispatchqueue_demo
 ```
 
 #### Option 3: GameLib Only
@@ -343,6 +360,117 @@ int height = window->GetHeight();
 bool shouldClose = window->ShouldClose();
 ```
 
+### Signal/Slot Event System
+
+AGL includes a modern Signal/Slot system for decoupled event handling:
+
+```cpp
+#include "agl.h"
+
+class GameEventHandler {
+public:
+    void OnKeyPressed(int key, int action, int mods) {
+        AGL_INFO("Key event - Key: {}, Action: {}, Mods: {}", key, action, mods);
+    }
+
+    void OnMouseButton(int button, int action, int mods) {
+        AGL_INFO("Mouse button event - Button: {}, Action: {}", button, action);
+    }
+
+    void OnWindowResize(int width, int height) {
+        AGL_INFO("Window resized to {}x{}", width, height);
+    }
+};
+
+class EventGame : public agl::Game {
+public:
+    bool Initialize(int width, int height, const char* title) override {
+        if (!agl::Game::Initialize(width, height, title)) {
+            return false;
+        }
+
+        m_eventHandler = std::make_unique<GameEventHandler>();
+
+        // Connect to input events
+        GetInput()->OnKeyPressed.Connect(
+            [this](int key, int action, int mods) {
+                m_eventHandler->OnKeyPressed(key, action, mods);
+            }
+        );
+
+        GetInput()->OnMouseButtonPressed.Connect(
+            [this](int button, int action, int mods) {
+                m_eventHandler->OnMouseButton(button, action, mods);
+            }
+        );
+
+        // Connect to window events
+        GetWindow()->OnWindowResize.Connect(
+            [this](int width, int height) {
+                m_eventHandler->OnWindowResize(width, height);
+            }
+        );
+
+        return true;
+    }
+
+private:
+    std::unique_ptr<GameEventHandler> m_eventHandler;
+};
+```
+
+### DispatchQueue Task Scheduling
+
+AGL provides thread-safe task scheduling with the DispatchQueue system:
+
+```cpp
+#include "agl.h"
+
+class AsyncGame : public agl::Game {
+public:
+    void OnUpdate(float deltaTime) override {
+        // Schedule background task
+        if (GetInput()->IsKeyPressed(GLFW_KEY_L)) {
+            LoadResourcesAsync();
+        }
+
+        // Schedule UI update on main thread
+        if (GetInput()->IsKeyPressed(GLFW_KEY_U)) {
+            UpdateUIFromBackground();
+        }
+    }
+
+private:
+    void LoadResourcesAsync() {
+        // Schedule heavy work on background thread
+        agl::DispatchQueue::global().async([this]() {
+            // Simulate heavy loading work
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+            
+            // Schedule UI update back on main thread
+            RunOnMainThread([this]() {
+                AGL_INFO("Resources loaded! Updating UI...");
+                // Update UI safely on main thread
+            });
+        });
+    }
+
+    void UpdateUIFromBackground() {
+        // Background processing with main thread result
+        agl::DispatchQueue::global().async([this]() {
+            // Process data in background
+            std::string result = "Processed data: " + std::to_string(rand());
+            
+            // Use synchronous main thread execution for immediate result
+            RunOnMainThreadSync([this, result]() {
+                AGL_INFO("Background result: {}", result);
+                // Update game state that needs immediate synchronization
+            });
+        });
+    }
+};
+```
+
 ### Input Handling
 
 ```cpp
@@ -386,6 +514,14 @@ The AGL Game Engine provides comprehensive documentation for all systems, with p
   - Advanced features (screen-to-world ray casting, view frustum culling)
   - Best practices and performance optimization
   - Troubleshooting guide with common issues and solutions
+
+- **[Signal/Slot & DispatchQueue Guide](SIGSLOT_DISPATCHQUEUE_DOCUMENTATION.md)** - Event and threading systems
+  - Signal/Slot system overview and architecture
+  - Type-safe event handling with compile-time checking
+  - DispatchQueue thread-safe task scheduling
+  - Integration patterns for Input and Window systems
+  - Performance considerations and best practices
+  - Advanced usage examples and threading patterns
 
 #### 🌐 Doxygen API Documentation
 Generate comprehensive HTML documentation with full API reference:

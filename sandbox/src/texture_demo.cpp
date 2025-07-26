@@ -277,7 +277,7 @@ private:
     }
 };
 
-int main_Texture() {
+int main() {
     std::cout << "Starting AGL Texture Demo..." << std::endl;
 
     TextureDemo demo;

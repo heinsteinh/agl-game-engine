@@ -144,6 +144,16 @@ void Input::GLFWKeyCallback(GLFWwindow* window, int key, int scancode, int actio
         KeyState state = static_cast<KeyState>(action);
         input->m_keyStates[key] = state;
 
+        // Trigger signal events
+        input->OnKeyEvent.broadcast(key, state);
+        
+        if (state == KeyState::Pressed) {
+            input->OnKeyPressed.broadcast(key);
+        } else if (state == KeyState::Released) {
+            input->OnKeyReleased.broadcast(key);
+        }
+
+        // Legacy callback support
         if (input->m_keyCallback) {
             input->m_keyCallback(key, state);
         }
@@ -155,9 +165,20 @@ void Input::GLFWMouseButtonCallback(GLFWwindow* window, int button, int action, 
     if (input) {
         KeyState state = static_cast<KeyState>(action);
         input->m_mouseButtonStates[button] = state;
+        
+        MouseButton mouseButton = static_cast<MouseButton>(button);
+        
+        // Trigger signal events
+        input->OnMouseButtonEvent.broadcast(mouseButton, state);
+        
+        if (state == KeyState::Pressed) {
+            input->OnMouseButtonPressed.broadcast(mouseButton);
+        } else if (state == KeyState::Released) {
+            input->OnMouseButtonReleased.broadcast(mouseButton);
+        }
 
+        // Legacy callback support
         if (input->m_mouseButtonCallback) {
-            MouseButton mouseButton = static_cast<MouseButton>(button);
             input->m_mouseButtonCallback(mouseButton, state);
         }
     }
@@ -169,6 +190,10 @@ void Input::GLFWCursorPositionCallback(GLFWwindow* window, double xpos, double y
         input->m_mouseX = xpos;
         input->m_mouseY = ypos;
 
+        // Trigger signal events
+        input->OnMouseMoveEvent.broadcast(xpos, ypos);
+
+        // Legacy callback support
         if (input->m_mouseMoveCallback) {
             input->m_mouseMoveCallback(xpos, ypos);
         }
@@ -181,6 +206,10 @@ void Input::GLFWScrollCallback(GLFWwindow* window, double xoffset, double yoffse
         input->m_scrollX = xoffset;
         input->m_scrollY = yoffset;
 
+        // Trigger signal events
+        input->OnScrollEvent.broadcast(xoffset, yoffset);
+
+        // Legacy callback support
         if (input->m_scrollCallback) {
             input->m_scrollCallback(xoffset, yoffset);
         }

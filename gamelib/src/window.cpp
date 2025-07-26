@@ -125,6 +125,10 @@ void Window::FramebufferSizeCallback(GLFWwindow *window, int width, int height) 
         windowInstance->m_width = width;
         windowInstance->m_height = height;
 
+        // Trigger signal events
+        windowInstance->OnWindowResize.broadcast(width, height);
+
+        // Legacy callback support
         if (windowInstance->m_resizeCallback) {
             windowInstance->m_resizeCallback(width, height);
         }
@@ -133,8 +137,14 @@ void Window::FramebufferSizeCallback(GLFWwindow *window, int width, int height) 
 
 void Window::WindowCloseCallback(GLFWwindow *window) {
     Window *windowInstance = static_cast<Window *>(glfwGetWindowUserPointer(window));
-    if (windowInstance && windowInstance->m_closeCallback) {
-        windowInstance->m_closeCallback();
+    if (windowInstance) {
+        // Trigger signal events
+        windowInstance->OnWindowClose.broadcast();
+
+        // Legacy callback support
+        if (windowInstance->m_closeCallback) {
+            windowInstance->m_closeCallback();
+        }
     }
 }
 

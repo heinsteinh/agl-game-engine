@@ -4,6 +4,7 @@
 #include "window.h"
 #include "input.h"
 #include "Logger.h"
+#include "DispatchQueue.h"
 #include <memory>
 
 namespace agl {
@@ -19,6 +20,18 @@ namespace agl {
         // Getters
         Window* GetWindow() const { return m_window.get(); }
         Input* GetInput() const { return m_input.get(); }
+        DispatchQueue& GetMainQueue() const { return DispatchQueue::main(); }
+
+        // Queue operations for convenience
+        template<typename F>
+        void RunOnMainThread(F&& func) {
+            DispatchQueue::main().async(std::forward<F>(func));
+        }
+        
+        template<typename F>
+        void RunOnMainThreadSync(F&& func) {
+            DispatchQueue::main().sync(std::forward<F>(func));
+        }
 
         // Game loop callbacks
         virtual void OnUpdate(float deltaTime) {}

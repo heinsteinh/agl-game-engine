@@ -10,6 +10,8 @@
 #include "Logger.h"
 #include "Camera.h"
 #include "CameraController.h"
+#include "SigSlot.h"
+#include "DispatchQueue.h"
 #include <imgui.h>
 
 // All AGL (A Graphics Library) classes are in the agl namespace

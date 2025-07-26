@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <unordered_map>
 #include <functional>
+#include "SigSlot.h"
 
 namespace agl {
     enum class KeyState {
@@ -52,11 +53,23 @@ namespace agl {
         // Scroll
         void GetScrollOffset(double& xOffset, double& yOffset) const;
 
-        // Callbacks
+        // Legacy callbacks (for backward compatibility)
         void SetKeyCallback(const KeyCallback& callback) { m_keyCallback = callback; }
         void SetMouseButtonCallback(const MouseButtonCallback& callback) { m_mouseButtonCallback = callback; }
         void SetMouseMoveCallback(const MouseMoveCallback& callback) { m_mouseMoveCallback = callback; }
         void SetScrollCallback(const ScrollCallback& callback) { m_scrollCallback = callback; }
+
+        // Signal/Slot based event system
+        Signal<int, KeyState> OnKeyEvent;               ///< Triggered when a key state changes
+        Signal<MouseButton, KeyState> OnMouseButtonEvent; ///< Triggered when a mouse button state changes
+        Signal<double, double> OnMouseMoveEvent;        ///< Triggered when mouse moves
+        Signal<double, double> OnScrollEvent;           ///< Triggered when scroll wheel moves
+        
+        // Convenience signals for specific key events
+        Signal<int> OnKeyPressed;                       ///< Triggered when a key is pressed
+        Signal<int> OnKeyReleased;                      ///< Triggered when a key is released
+        Signal<MouseButton> OnMouseButtonPressed;      ///< Triggered when a mouse button is pressed
+        Signal<MouseButton> OnMouseButtonReleased;     ///< Triggered when a mouse button is released
 
         // Cursor modes
         void SetCursorMode(int mode); // GLFW_CURSOR_NORMAL, GLFW_CURSOR_HIDDEN, GLFW_CURSOR_DISABLED

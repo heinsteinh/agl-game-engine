@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <string>
 #include <functional>
+#include "SigSlot.h"
 
 namespace agl {
     class Window {
@@ -33,9 +34,14 @@ namespace agl {
         void SetSize(int width, int height);
         void SetVSync(bool enabled);
 
-        // Callbacks
+        // Legacy callbacks (for backward compatibility)
         void SetResizeCallback(const ResizeCallback& callback) { m_resizeCallback = callback; }
         void SetCloseCallback(const CloseCallback& callback) { m_closeCallback = callback; }
+
+        // Signal/Slot based event system
+        Signal<int, int> OnWindowResize;                ///< Triggered when window is resized
+        Signal<> OnWindowClose;                         ///< Triggered when window close is requested
+        Signal<int, const char*> OnWindowError;         ///< Triggered when GLFW error occurs
 
         // Static methods
         static void Initialize();

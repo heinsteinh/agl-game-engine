@@ -100,3 +100,4 @@ gmon.out
 docs/html/
 docs/latex/
 imgui.ini
+docs/*
