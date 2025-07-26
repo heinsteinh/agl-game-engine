@@ -88,7 +88,7 @@ public:
     }
 };
 
-int main() {
+int main_Benchmark() {
     DeltaTimeBenchmark benchmark;
 
     if (benchmark.Initialize(1200, 800, "DeltaTime Benchmark - AGL Game Engine")) {

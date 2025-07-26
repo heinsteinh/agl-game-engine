@@ -13,7 +13,9 @@ A modern C++17 cross-platform game engine built with OpenGL, GLFW, ImGui, and sp
 - **🎨 OpenGL 3.3+**: Modern programmable pipeline with comprehensive abstractions
 - **📦 Modular Architecture**: GameLib library + Sandbox demo applications
 - **🎮 Complete Systems**: Window, Input, Renderer, Texture, Shader, and Buffer management
-- **🖥️ ImGui Integration**: Real-time debugging and UI development
+- **� Advanced Camera System**: First-person, third-person, spectator modes with shooter game features
+- **🎯 Shooter Game Ready**: Sprint, crouch, aim, camera shake, dynamic FOV, and mouse look
+- **�🖥️ ImGui Integration**: Real-time debugging and UI development
 - **📝 Advanced Logging**: Comprehensive spdlog integration with core/client separation
 - **⚡ Performance Monitoring**: Delta time management, FPS tracking, and performance analytics
 - **🏗️ CMake Build System**: FetchContent dependency management and export targets
@@ -29,6 +31,8 @@ gamelib/                    # Core game engine library
 │   ├── game.h            # Game loop and timing
 │   ├── window.h          # Window management
 │   ├── input.h           # Input handling
+│   ├── Camera.h          # 3D camera system
+│   ├── CameraController.h # Advanced camera control
 │   ├── Renderer.h        # OpenGL renderer
 │   ├── Shader.h          # Shader programs
 │   ├── Texture.h         # Texture management
@@ -38,12 +42,16 @@ gamelib/                    # Core game engine library
     ├── game.cpp
     ├── window.cpp
     ├── input.cpp
+    ├── Camera.cpp
+    ├── CameraController.cpp
     ├── Renderer.cpp
     └── ...
 
 sandbox/                   # Demo applications
 ├── src/                   # Demo source files
-│   ├── renderer_demo.cpp
+│   ├── renderer_demo.cpp         # Basic OpenGL rendering
+│   ├── shooter_camera_demo.cpp   # Advanced camera system
+│   ├── advanced_renderer_demo.cpp # Camera comparison demo
 │   ├── texture_demo.cpp
 │   ├── example_logger_demo.cpp
 │   └── benchmark_deltatime_demo.cpp
@@ -89,10 +97,18 @@ cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --parallel
 
 # Run demos
-./build/bin/agl_renderer_demo
-./build/bin/agl_texture_demo
-./build/bin/agl_example_logger_demo
-./build/bin/agl_benchmark_deltatime_demo
+./build/bin/sandbox  # Runs the main renderer demo
+```
+
+### Running Individual Demos
+
+The sandbox executable contains multiple demos, each with different main functions:
+- `main()` - Enhanced renderer demo with camera controls
+- `main_shooter_camera()` - Advanced camera system for shooters  
+- `main_advanced_renderer()` - Comparison between old and new camera systems
+- `main_Texture()` - Texture loading and management demo
+- `main_logger()` - Logging system demonstration
+- `main_Benchmark()` - Performance and delta time benchmarking
 ```
 
 #### Option 2: Standalone Demo Build
@@ -101,12 +117,10 @@ Build individual demos with automatic gamelib dependency:
 ```bash
 cd sandbox
 
-# Build specific demo
-cmake -B demo_build -DDEMO_NAME=renderer -DCMAKE_BUILD_TYPE=Release
+# Build all demos in sandbox
+cmake -B demo_build -DCMAKE_BUILD_TYPE=Release
 cmake --build demo_build --parallel
-./demo_build/bin/agl_renderer_demo
-
-# Available demos: renderer, texture, example_logger, benchmark_deltatime
+./demo_build/bin/sandbox  # Main executable with multiple demos
 ```
 
 #### Option 3: GameLib Only
@@ -213,7 +227,86 @@ int main() {
 }
 ```
 
-### Advanced Logging System
+### Advanced Camera System
+
+AGL includes a comprehensive camera system designed specifically for shooter games and 3D applications:
+
+```cpp
+#include "agl.h"
+
+class ShooterGame : public agl::Game {
+public:
+    bool Initialize(int width, int height, const char* title) override {
+        if (!agl::Game::Initialize(width, height, title)) {
+            return false;
+        }
+
+        // Create camera and controller
+        m_camera = std::make_shared<agl::Camera>(
+            glm::vec3(0.0f, 2.0f, 5.0f),  // Position
+            glm::vec3(0.0f, 1.0f, 0.0f),  // Up vector
+            -90.0f,                        // Yaw
+            0.0f                          // Pitch
+        );
+
+        float aspectRatio = static_cast<float>(width) / static_cast<float>(height);
+        m_camera->SetPerspective(75.0f, aspectRatio);
+
+        m_cameraController = std::make_unique<agl::CameraController>(m_camera);
+        m_cameraController->Initialize(GetInput());
+
+        // Configure for shooter gameplay
+        agl::CameraSettings settings;
+        settings.movementSpeed = 8.0f;          // Fast movement
+        settings.sprintMultiplier = 2.0f;       // Sprint speed boost
+        settings.mouseSensitivity = 0.15f;      // Good for aiming
+        settings.defaultFOV = 75.0f;            // Standard FOV
+        settings.aimFOV = 50.0f;                // Zoom when aiming
+        settings.sprintFOV = 85.0f;             // Wider when sprinting
+        
+        m_cameraController->SetSettings(settings);
+        return true;
+    }
+
+    void OnUpdate(float deltaTime) override {
+        // Update camera (handles all input automatically)
+        m_cameraController->Update(deltaTime);
+
+        // Camera mode switching
+        if (GetInput()->IsKeyPressed(GLFW_KEY_1)) {
+            m_cameraController->SetMode(agl::CameraMode::FirstPerson);
+        }
+        if (GetInput()->IsKeyPressed(GLFW_KEY_2)) {
+            m_cameraController->SetMode(agl::CameraMode::ThirdPerson);
+            m_cameraController->SetTarget(glm::vec3(0.0f, 1.0f, 0.0f));
+        }
+
+        // Test camera shake (e.g., weapon fire)
+        if (GetInput()->IsKeyPressed(GLFW_KEY_X)) {
+            m_cameraController->AddShake(0.5f, 1.0f);
+        }
+    }
+
+    void OnRender() override {
+        // Use camera for rendering
+        glm::mat4 viewProj = m_camera->GetViewProjectionMatrix();
+        
+        // Render your scene with the camera
+        // ...
+    }
+
+private:
+    std::shared_ptr<agl::Camera> m_camera;
+    std::unique_ptr<agl::CameraController> m_cameraController;
+};
+```
+
+#### Camera Features:
+- **🎮 Shooter Controls**: WASD movement, mouse look, sprint (Shift), crouch (Ctrl), aim (Right click)
+- **📷 Multiple Modes**: First-person, third-person, spectator, and fixed camera modes
+- **🎯 Advanced Features**: Dynamic FOV, camera shake, smooth transitions, input validation
+- **⚙️ Configurable**: Customizable movement speed, sensitivity, FOV settings, and key bindings
+- **🎪 Smooth Interpolation**: Optional movement and rotation smoothing for cinematic feel
 
 ```cpp
 #include "agl.h"
@@ -281,14 +374,38 @@ input->GetMouseDelta(deltaX, deltaY);
 
 The sandbox contains several demo applications showcasing different engine features:
 
-### 🎨 Renderer Demo (`renderer_demo`)
-- **Demonstrates**: Basic OpenGL rendering, 3D transformations, camera controls
-- **Features**: Triangle, quad, and cube rendering with different colors
-- **Controls**: Mouse look, WASD movement, wireframe toggle, zoom controls
+### � Shooter Camera Demo (`shooter_camera_demo`)
+- **Demonstrates**: Advanced camera system designed for shooter games
+- **Features**: First-person controls, sprinting, crouching, aiming, camera shake effects
+- **Camera Modes**: First-person, third-person, spectator, and fixed modes
+- **Key Bindings**:
+  - `WASD` - Movement (forward/left/backward/right)
+  - `SPACE` - Jump/move up
+  - `LEFT CTRL` - Crouch/move down
+  - `LEFT SHIFT` - Sprint (hold)
+  - `RIGHT MOUSE` - Aim (zoom FOV)
+  - `1-4` - Switch camera modes
+  - `X` - Test camera shake
+  - `TAB` - Toggle wireframe
+  - `H` - Toggle help overlay
+
+### 🔄 Advanced Renderer Demo (`advanced_renderer_demo`)
+- **Demonstrates**: Comparison between old manual camera and new camera system
+- **Features**: Side-by-side camera system comparison, enhanced rendering
+- **Controls**: Switch between camera systems to see the difference
+- **Key Bindings**:
+  - `C` - Toggle between old/new camera systems
+  - All standard camera controls for both systems
+
+### �🎨 Renderer Demo (`renderer_demo`)
+- **Demonstrates**: Basic OpenGL rendering, 3D transformations, enhanced camera controls
+- **Features**: Triangle, quad, and cube rendering with improved camera system
+- **Controls**: Mouse look, WASD movement, wireframe toggle, animation controls
 - **Key Bindings**: 
   - `TAB` - Toggle wireframe mode
-  - `Right Mouse` - Enable/disable mouse look
-  - `W/S` - Zoom in/out
+  - `SPACE` - Pause/resume animation
+  - `W/A/S/D` - Camera movement
+  - `Q/E` - Look up/down
   - `R` - Reset camera
 
 ### 🖼️ Texture Demo (`texture_demo`)
@@ -318,6 +435,8 @@ All engine classes are in the `agl` namespace:
 - `agl::Game` - Main game loop with delta time management
 - `agl::Window` - Cross-platform window management  
 - `agl::Input` - Unified input handling system
+- `agl::Camera` - 3D camera with perspective/orthographic projection
+- `agl::CameraController` - Advanced camera control with shooter game features
 - `agl::Renderer` - OpenGL abstraction layer
 - `agl::Shader` - Shader program management
 - `agl::Texture2D` - Texture loading and management
@@ -326,6 +445,11 @@ All engine classes are in the `agl` namespace:
 ### Logging Macros
 - **Core Engine**: `AGL_CORE_INFO`, `AGL_CORE_WARN`, `AGL_CORE_ERROR`, `AGL_CORE_TRACE`
 - **Application**: `AGL_INFO`, `AGL_WARN`, `AGL_ERROR`, `AGL_TRACE`
+
+### Camera System Enums
+- **Camera Modes**: `CameraMode::FirstPerson`, `CameraMode::ThirdPerson`, `CameraMode::Spectator`, `CameraMode::Fixed`
+- **Camera Movement**: `CameraMovement::Forward`, `CameraMovement::Backward`, `CameraMovement::Left`, `CameraMovement::Right`, `CameraMovement::Up`, `CameraMovement::Down`
+- **Camera Types**: `CameraType::Perspective`, `CameraType::Orthographic`
 
 ### Event-Driven Architecture
 - Callback-based input system
@@ -339,7 +463,7 @@ All engine classes are in the `agl` namespace:
 - **Performance Logging**: Comprehensive metrics and analytics
     void OnUpdate(float deltaTime) override {
         // Update game logic
-        if (GetInput()->IsKeyPressed(agt::Keys::Space)) {
+        if (GetInput()->IsKeyPressed(agl::Keys::Space)) {
             std::cout << "Space pressed!" << std::endl;
         }
     }
@@ -395,6 +519,33 @@ The project includes a comprehensive GitHub Actions workflow:
 - **📚 Documentation**: Auto-generated Doxygen docs deployed to GitHub Pages
 - **🏷️ Automated Releases**: Tagged releases with platform-specific artifacts
 - **⚡ Performance Monitoring**: Build size analysis and performance benchmarks
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+**Segmentation Fault on Startup**
+- **Cause**: Calling logging macros (`AGL_INFO`, `AGL_ERROR`, etc.) before `Game::Initialize()`
+- **Solution**: Ensure `Game::Initialize()` is called before any logging operations
+- **Example**:
+```cpp
+// ❌ Wrong - logging before initialization
+AGL_INFO("Starting game...");
+MyGame game;
+game.Initialize(1280, 720, "My Game");
+
+// ✅ Correct - logging after initialization
+MyGame game;
+if (game.Initialize(1280, 720, "My Game")) {
+    AGL_INFO("Game initialized successfully!");
+    game.Run();
+}
+```
+
+**Build Errors with Camera System**
+- Ensure you're including the correct header: `#include "agl.h"`
+- Make sure CMake has found and built the new camera source files
+- Clean and rebuild: `rm -rf build && cmake -B build && cmake --build build`
 
 ## 🤝 Contributing
 
