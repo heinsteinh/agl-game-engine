@@ -182,7 +182,7 @@ jobs:
   documentation-test:
     name: Test Documentation Generation
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -196,10 +196,10 @@ jobs:
       run: |
         echo "Testing documentation generation script..."
         chmod +x generate_docs.sh
-        
+
         # Run the documentation generation
         ./generate_docs.sh
-        
+
         # Verify outputs
         if [ -f "docs/doxygen/html/index.html" ]; then
           echo "✅ HTML documentation generated successfully"
@@ -207,7 +207,7 @@ jobs:
           echo "❌ HTML documentation generation failed"
           exit 1
         fi
-        
+
         if [ -f "docs/CAMERA_DOCUMENTATION.md" ]; then
           echo "✅ Markdown documentation exists"
           wc -l docs/CAMERA_DOCUMENTATION.md
@@ -393,16 +393,16 @@ jobs:
       run: |
         # Use the project's Doxyfile for comprehensive camera documentation
         echo "Generating documentation using project Doxyfile..."
-        
+
         # Verify Doxyfile exists
         if [ ! -f "Doxyfile" ]; then
           echo "❌ Doxyfile not found"
           exit 1
         fi
-        
+
         # Generate documentation
         doxygen Doxyfile
-        
+
         # Verify documentation was generated
         if [ -f "docs/doxygen/html/index.html" ]; then
           echo "✅ Documentation generated successfully"

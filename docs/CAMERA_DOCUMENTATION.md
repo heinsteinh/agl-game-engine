@@ -74,7 +74,7 @@ public:
     void OnRender() override {
         // Use camera for rendering
         glm::mat4 viewProjection = m_camera->GetViewProjectionMatrix();
-        
+
         // Apply to your shaders and render scene
         // ...
     }
@@ -390,31 +390,31 @@ struct CameraSettings {
     float movementSpeed = 5.0f;
     float sprintMultiplier = 2.0f;
     float crouchMultiplier = 0.5f;
-    
+
     // Mouse settings
     float mouseSensitivity = 0.1f;
     bool invertY = false;
-    
+
     // Smoothing settings
     float movementSmoothing = 0.1f;
     float rotationSmoothing = 0.1f;
-    
+
     // Third person settings
     float thirdPersonDistance = 5.0f;
     float thirdPersonHeight = 2.0f;
     glm::vec3 thirdPersonOffset = glm::vec3(0.0f, 0.0f, 0.0f);
-    
+
     // Constraints
     bool constrainPitch = true;
     float minPitch = -89.0f;
     float maxPitch = 89.0f;
-    
+
     // Field of view settings
     float defaultFOV = 75.0f;
     float sprintFOV = 85.0f;
     float aimFOV = 50.0f;
     float fovTransitionSpeed = 5.0f;
-    
+
     // Shake settings
     float shakeIntensity = 1.0f;
     float shakeDamping = 5.0f;
@@ -603,7 +603,7 @@ private:
         // Get aim ray for projectile
         double mouseX, mouseY;
         GetInput()->GetMousePosition(mouseX, mouseY);
-        
+
         glm::vec3 aimRay = m_camera->GetScreenToWorldRay(
             static_cast<float>(mouseX),
             static_cast<float>(mouseY),
@@ -661,7 +661,7 @@ public:
         auto it = m_savedStates.find(stateName);
         if (it != m_savedStates.end()) {
             const CameraState& state = it->second;
-            
+
             m_camera->SetPosition(state.position);
             m_camera->SetRotation(state.yaw, state.pitch);
             m_cameraController->SetFOV(state.fov);
@@ -755,13 +755,13 @@ void OnUpdate(float deltaTime) override {
 ```cpp
 void SaveCameraSettings(const std::string& filename) {
     const auto& settings = m_cameraController->GetSettings();
-    
+
     nlohmann::json config;
     config["movementSpeed"] = settings.movementSpeed;
     config["mouseSensitivity"] = settings.mouseSensitivity;
     config["invertY"] = settings.invertY;
     config["defaultFOV"] = settings.defaultFOV;
-    
+
     std::ofstream file(filename);
     file << config.dump(4);
 }
@@ -784,7 +784,7 @@ void SaveCameraSettings(const std::string& filename) {
 // Debug camera state
 AGL_INFO("Camera input enabled: {}", m_cameraController->IsInputEnabled());
 AGL_INFO("Camera mode: {}", static_cast<int>(m_cameraController->GetMode()));
-AGL_INFO("Camera position: {:.2f}, {:.2f}, {:.2f}", 
+AGL_INFO("Camera position: {:.2f}, {:.2f}, {:.2f}",
          pos.x, pos.y, pos.z);
 ```
 
@@ -871,11 +871,11 @@ void RenderCameraDebugInfo() {
         ImGui::Text("Yaw: %.1f°", m_camera->GetYaw());
         ImGui::Text("Pitch: %.1f°", m_camera->GetPitch());
         ImGui::Text("FOV: %.1f°", m_cameraController->GetCurrentFOV());
-        
+
         const char* modeNames[] = {"First Person", "Third Person", "Spectator", "Fixed"};
         int mode = static_cast<int>(m_cameraController->GetMode());
         ImGui::Text("Mode: %s", modeNames[mode]);
-        
+
         ImGui::Text("States:");
         ImGui::Text("  Aiming: %s", m_cameraController->IsAiming() ? "YES" : "NO");
         ImGui::Text("  Sprinting: %s", m_cameraController->IsSprinting() ? "YES" : "NO");
