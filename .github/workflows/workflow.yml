@@ -87,7 +87,7 @@ jobs:
     - name: Build GameLib and Sandbox
       run: |
         cmake --build build --config ${{ matrix.build_type }} --parallel
-        
+
     - name: Install project
       run: cmake --install build --config ${{ matrix.build_type }}
 
@@ -95,7 +95,7 @@ jobs:
       run: |
         echo "Checking if gamelib was built successfully..."
         ls -la build/lib/ || ls -la build/${{ matrix.build_type }}/lib/ || echo "No lib directory found"
-        
+
         echo "Checking if sandbox demos were built..."
         ls -la build/bin/ || ls -la build/${{ matrix.build_type }}/bin/ || echo "No bin directory found"
 
@@ -213,15 +213,15 @@ jobs:
     - name: Run static analysis
       run: |
         echo "=== Static Analysis ==="
-        
+
         # Find all C++ source files
         find gamelib sandbox -name "*.cpp" -o -name "*.h" -o -name "*.hpp" > source_files.txt
-        
+
         if [ -s source_files.txt ]; then
           echo "Running cppcheck..."
           cppcheck --enable=all --inconclusive --xml --xml-version=2 \
             --file-list=source_files.txt 2> cppcheck_results.xml || true
-            
+
           echo "Static analysis completed"
         else
           echo "No C++ source files found"
@@ -230,15 +230,15 @@ jobs:
     - name: Check project structure
       run: |
         echo "=== Project Structure Analysis ==="
-        
+
         echo "GameLib components:"
         find gamelib -name "*.cpp" | wc -l | xargs echo "  CPP files:"
         find gamelib -name "*.h" -o -name "*.hpp" | wc -l | xargs echo "  Header files:"
-        
+
         echo "Sandbox demos:"
         find sandbox -name "*demo*.cpp" | wc -l | xargs echo "  Demo files:"
         ls sandbox/src/*demo*.cpp 2>/dev/null | sed 's/.*\///;s/_demo.cpp//;s/\.cpp//' | sed 's/^/  - /' || echo "  No demo files found"
-        
+
         echo "Documentation:"
         find . -name "*.md" | wc -l | xargs echo "  Markdown files:"
 
@@ -285,10 +285,10 @@ jobs:
       run: |
         mkdir -p integration_test
         cd integration_test
-        
+
         cat > test_integration.cpp << 'EOF'
         #include <iostream>
-        
+
         // Basic test without full gamelib to avoid display issues
         int main() {
             std::cout << "Integration test: GameLib headers accessible" << std::endl;
@@ -296,14 +296,14 @@ jobs:
             return 0;
         }
         EOF
-        
+
         cat > CMakeLists.txt << 'EOF'
         cmake_minimum_required(VERSION 3.16)
         project(IntegrationTest)
         set(CMAKE_CXX_STANDARD 17)
         add_executable(test_integration test_integration.cpp)
         EOF
-        
+
         cmake -B build
         cmake --build build
         ./build/test_integration
@@ -335,38 +335,38 @@ jobs:
         PROJECT_NAME = "AGL Game Engine"
         PROJECT_NUMBER = "v1.0.0"
         PROJECT_BRIEF = "Modern C++ Game Engine with OpenGL"
-        
+
         INPUT = gamelib/include/ gamelib/src/ sandbox/src/ README.md
         OUTPUT_DIRECTORY = docs/generated
-        
+
         GENERATE_HTML = YES
         GENERATE_LATEX = NO
         HTML_OUTPUT = .
-        
+
         RECURSIVE = YES
         EXTRACT_ALL = YES
         EXTRACT_PRIVATE = NO
         EXTRACT_STATIC = YES
-        
+
         USE_MDFILE_AS_MAINPAGE = README.md
         MARKDOWN_SUPPORT = YES
-        
+
         HAVE_DOT = YES
         CLASS_DIAGRAMS = YES
         CLASS_GRAPH = YES
         COLLABORATION_GRAPH = YES
-        
+
         SEARCHENGINE = YES
         GENERATE_TREEVIEW = YES
-        
+
         FILE_PATTERNS = *.h *.hpp *.cpp *.md
         EXCLUDE_PATTERNS = */build/* */.*
-        
+
         WARNINGS = YES
         WARN_IF_UNDOCUMENTED = NO
         QUIET = YES
         EOF
-        
+
         mkdir -p docs/generated
         doxygen Doxyfile
 
@@ -400,7 +400,7 @@ jobs:
     - name: Create release packages
       run: |
         cd release-artifacts
-        
+
         # Create platform-specific packages
         for platform in ubuntu-latest macos-latest; do
           if [ -d "agl-engine-${platform}-Release" ]; then
@@ -408,7 +408,7 @@ jobs:
             tar -czf "../agl-engine-${platform}.tar.gz" "agl-engine-${platform}-Release"
           fi
         done
-        
+
         cd ..
         ls -la *.tar.gz
 
@@ -416,7 +416,7 @@ jobs:
       run: |
         cat > RELEASE_NOTES.md << 'EOF'
         # AGL Game Engine Release
-        
+
         ## Features
         - Modern C++17 game engine
         - OpenGL rendering system
@@ -424,12 +424,12 @@ jobs:
         - Cross-platform support (Linux, macOS, Windows)
         - Comprehensive logging system
         - Multiple demo applications
-        
+
         ## Build Artifacts
         - Pre-built binaries for supported platforms
         - Static libraries for integration
         - Demo applications showcase
-        
+
         ## Getting Started
         See README.md for build instructions and usage examples.
         EOF
@@ -474,14 +474,14 @@ jobs:
         echo "Timestamp: $(date)" >> perf_report.txt
         echo "Commit: ${{ github.sha }}" >> perf_report.txt
         echo "" >> perf_report.txt
-        
+
         # Library size analysis
         echo "Library Sizes:" >> perf_report.txt
         find build -name "*.a" -o -name "*.so" -o -name "*.dll" | while read lib; do
           size_kb=$(du -k "$lib" | cut -f1)
           echo "  $(basename $lib): ${size_kb} KB" >> perf_report.txt
         done
-        
+
         # Executable sizes
         echo "" >> perf_report.txt
         echo "Executable Sizes:" >> perf_report.txt
@@ -491,7 +491,7 @@ jobs:
             echo "  $(basename $exe): ${size_kb} KB" >> perf_report.txt
           fi
         done
-        
+
         cat perf_report.txt
 
     - name: Upload performance report

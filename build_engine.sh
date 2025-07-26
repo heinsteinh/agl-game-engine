@@ -91,26 +91,26 @@ full_build() {
 test_demo() {
     local demo_name=${1:-renderer}
     print_header "Quick Test Build and Run: $demo_name"
-    
+
     # Check if gamelib exists
     if [ ! -f "gamelib/gamelib_install/lib/libagl_gamelib.a" ]; then
         print_warning "GameLib not found, building it first..."
         build_gamelib
     fi
-    
+
     # Build demo
     build_demo "$demo_name"
-    
+
     # Run demo
     print_header "Running Demo: $demo_name"
     cd sandbox
     ./demo_build_${demo_name}/agl_${demo_name}_demo &
     DEMO_PID=$!
     cd ..
-    
+
     echo "Demo started with PID: $DEMO_PID"
     echo "Press Ctrl+C to stop the demo"
-    
+
     # Wait for user to stop
     trap "kill $DEMO_PID 2>/dev/null || true; exit 0" INT
     wait $DEMO_PID

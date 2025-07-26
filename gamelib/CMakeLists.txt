@@ -18,7 +18,7 @@ include_directories(${INCLUDE_OUTPUT_PATH})
 
 
 # Create the static library
-add_library(gamelib STATIC 
+add_library(gamelib STATIC
  ${GAMELIB_SOURCES}
  ${GAMELIB_HEADERS})
 
