@@ -6,6 +6,20 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+
+# Set build type if not specified
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+endif()
+
+# Global compiler flags
+if(MSVC)
+    add_compile_options(/W4 /permissive-)
+else()
+    add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+
 # Set the output directories for the compiled binaries
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -23,9 +37,9 @@ include(cmake/Dependency.cmake)
 add_subdirectory(gamelib)
 add_subdirectory(sandbox)
 
-# Set the default startup project for IDEs
-if(WIN32)
-    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT AGL_Sandbox)
+# Set startup project for Visual Studio
+if(WIN32 AND CMAKE_GENERATOR MATCHES "Visual Studio")
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT sandbox)
 endif()
 
 message(STATUS "=== AGL Game Engine Build Configuration ===")

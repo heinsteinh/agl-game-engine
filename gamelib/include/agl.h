@@ -8,6 +8,7 @@
 #include "window.h"
 #include "input.h"
 #include "Logger.h"
+#include <imgui.h>
 
 // All AGL (A Graphics Library) classes are in the agl namespace
 // Usage examples:

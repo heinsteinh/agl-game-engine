@@ -58,7 +58,7 @@ public:
     }
 };
 
-int main() {
+int main_logger() {
     MyGame game;
 
     if (game.Initialize(1024, 768, "Logger Demo - AGL Game Engine")) {

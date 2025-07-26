@@ -276,7 +276,7 @@ private:
     }
 };
 
-int main() {
+int main_Renderer() {
     std::cout << "Starting AGL Renderer Demo..." << std::endl;
 
     RendererDemo demo;
