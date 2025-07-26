@@ -1,27 +1,18 @@
-#include "agl.h"
 #include "Renderer.h"
-#include <iostream>
+#include "agl.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
+#include <iostream>
 
 // Example game class demonstrating the AGL renderer
 class RendererDemo : public agl::Game {
 public:
     RendererDemo()
-        : m_rotation(0.0f)
-        , m_wireframeMode(false)
-        , m_animationPaused(false)
-        , m_cameraDistance(5.0f)
-        , m_cameraYaw(0.0f)
-        , m_cameraPitch(0.0f)
-        , m_lastMouseX(0.0)
-        , m_lastMouseY(0.0)
-        , m_firstMouse(true)
-        , m_mouseLookEnabled(false) {
-    }
+        : m_rotation(0.0f), m_wireframeMode(false), m_animationPaused(false), m_cameraDistance(5.0f), m_cameraYaw(0.0f),
+          m_cameraPitch(0.0f), m_lastMouseX(0.0), m_lastMouseY(0.0), m_firstMouse(true), m_mouseLookEnabled(false) {}
 
-    bool Initialize(int width = 1024, int height = 768, const char* title = "AGL Renderer Demo") {
+    bool Initialize(int width = 1024, int height = 768, const char *title = "AGL Renderer Demo") {
         if (!agl::Game::Initialize(width, height, title)) {
             AGL_ERROR("Failed to initialize base game class");
             return false;
@@ -43,9 +34,9 @@ public:
 
         // Create triangle vertices with improved positioning
         float triangleVertices[] = {
-            -0.5f, -0.5f, 0.0f,  // Bottom-left
-             0.5f, -0.5f, 0.0f,  // Bottom-right
-             0.0f,  0.5f, 0.0f   // Top
+            -0.5f, -0.5f, 0.0f, // Bottom-left
+            0.5f,  -0.5f, 0.0f, // Bottom-right
+            0.0f,  0.5f,  0.0f  // Top
         };
 
         // Create vertex buffer and layout
@@ -74,8 +65,8 @@ public:
         static float perfTimer = 0.0f;
         perfTimer += deltaTime;
         if (perfTimer >= 5.0f) {
-            AGL_INFO("Renderer Demo Performance - FPS: {:.1f}, Delta: {:.3f}ms, Objects: 3",
-                    GetFPS(), deltaTime * 1000.0f);
+            AGL_INFO("Renderer Demo Performance - FPS: {:.1f}, Delta: {:.3f}ms, Objects: 3", GetFPS(),
+                     deltaTime * 1000.0f);
             perfTimer = 0.0f;
         }
 
@@ -314,10 +305,9 @@ private:
         glm::vec3 cameraPos(x, y, z);
 
         // View matrix (camera)
-        m_view = glm::lookAt(
-            cameraPos,                      // Camera position
-            glm::vec3(0.0f, 0.0f, 0.0f),   // Look at origin
-            glm::vec3(0.0f, 1.0f, 0.0f)    // Up vector
+        m_view = glm::lookAt(cameraPos,                   // Camera position
+                             glm::vec3(0.0f, 0.0f, 0.0f), // Look at origin
+                             glm::vec3(0.0f, 1.0f, 0.0f)  // Up vector
         );
     }
 
@@ -348,8 +338,10 @@ private:
             m_cameraPitch += static_cast<float>(deltaY);
 
             // Constrain pitch to prevent camera flipping
-            if (m_cameraPitch > 89.0f) m_cameraPitch = 89.0f;
-            if (m_cameraPitch < -89.0f) m_cameraPitch = -89.0f;
+            if (m_cameraPitch > 89.0f)
+                m_cameraPitch = 89.0f;
+            if (m_cameraPitch < -89.0f)
+                m_cameraPitch = -89.0f;
         }
 
         // Handle scroll wheel zoom
@@ -384,12 +376,16 @@ private:
         }
 
         // Constrain camera distance
-        if (m_cameraDistance < 1.0f) m_cameraDistance = 1.0f;
-        if (m_cameraDistance > 20.0f) m_cameraDistance = 20.0f;
+        if (m_cameraDistance < 1.0f)
+            m_cameraDistance = 1.0f;
+        if (m_cameraDistance > 20.0f)
+            m_cameraDistance = 20.0f;
 
         // Constrain pitch
-        if (m_cameraPitch > 89.0f) m_cameraPitch = 89.0f;
-        if (m_cameraPitch < -89.0f) m_cameraPitch = -89.0f;
+        if (m_cameraPitch > 89.0f)
+            m_cameraPitch = 89.0f;
+        if (m_cameraPitch < -89.0f)
+            m_cameraPitch = -89.0f;
 
         // Reset camera with R key
         if (GetInput()->IsKeyPressed(GLFW_KEY_R)) {

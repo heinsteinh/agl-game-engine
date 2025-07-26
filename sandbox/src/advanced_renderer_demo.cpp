@@ -1,30 +1,22 @@
-#include "agl.h"
 #include "Renderer.h"
-#include <iostream>
+#include "agl.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
+#include <iostream>
 
 // Enhanced renderer demo showing both old manual camera and new camera system
 class AdvancedRendererDemo : public agl::Game {
 public:
     AdvancedRendererDemo()
-        : m_rotation(0.0f)
-        , m_wireframeMode(false)
-        , m_animationPaused(false)
-        , m_useNewCameraSystem(true)
+        : m_rotation(0.0f), m_wireframeMode(false), m_animationPaused(false), m_useNewCameraSystem(true)
 
-        // Old camera system variables (for comparison)
-        , m_cameraDistance(5.0f)
-        , m_cameraYaw(0.0f)
-        , m_cameraPitch(0.0f)
-        , m_lastMouseX(0.0)
-        , m_lastMouseY(0.0)
-        , m_firstMouse(true)
-        , m_mouseLookEnabled(false) {
-    }
+          // Old camera system variables (for comparison)
+          ,
+          m_cameraDistance(5.0f), m_cameraYaw(0.0f), m_cameraPitch(0.0f), m_lastMouseX(0.0), m_lastMouseY(0.0),
+          m_firstMouse(true), m_mouseLookEnabled(false) {}
 
-    bool Initialize(int width = 1280, int height = 720, const char* title = "AGL Advanced Renderer Demo") {
+    bool Initialize(int width = 1280, int height = 720, const char *title = "AGL Advanced Renderer Demo") {
         if (!agl::Game::Initialize(width, height, title)) {
             AGL_ERROR("Failed to initialize base game class");
             return false;
@@ -38,11 +30,10 @@ public:
 
         // === NEW CAMERA SYSTEM ===
         // Create modern camera and controller
-        m_camera = std::make_shared<agl::Camera>(
-            glm::vec3(0.0f, 2.0f, 5.0f),  // Starting position
-            glm::vec3(0.0f, 1.0f, 0.0f),  // Up vector
-            -90.0f,                        // Yaw (facing forward)
-            0.0f                          // Pitch (level)
+        m_camera = std::make_shared<agl::Camera>(glm::vec3(0.0f, 2.0f, 5.0f), // Starting position
+                                                 glm::vec3(0.0f, 1.0f, 0.0f), // Up vector
+                                                 -90.0f,                      // Yaw (facing forward)
+                                                 0.0f                         // Pitch (level)
         );
 
         float aspectRatio = static_cast<float>(width) / static_cast<float>(height);
@@ -73,9 +64,9 @@ public:
 
         // Create triangle vertices
         float triangleVertices[] = {
-            -0.5f, -0.5f, 0.0f,  // Bottom-left
-             0.5f, -0.5f, 0.0f,  // Bottom-right
-             0.0f,  0.5f, 0.0f   // Top
+            -0.5f, -0.5f, 0.0f, // Bottom-left
+            0.5f,  -0.5f, 0.0f, // Bottom-right
+            0.0f,  0.5f,  0.0f  // Top
         };
 
         m_triangleVB = std::make_shared<agl::VertexBuffer>(triangleVertices, sizeof(triangleVertices));
@@ -138,7 +129,8 @@ public:
             glm::mat4 viewProj = m_camera->GetViewProjectionMatrix();
 
             // Draw spinning triangle
-            glm::mat4 triangleModel = glm::rotate(glm::mat4(1.0f), glm::radians(m_rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+            glm::mat4 triangleModel =
+                glm::rotate(glm::mat4(1.0f), glm::radians(m_rotation), glm::vec3(0.0f, 0.0f, 1.0f));
             glm::mat4 triangleMVP = viewProj * triangleModel;
 
             m_shader->Use();
@@ -150,10 +142,12 @@ public:
             // Draw multiple cubes in a grid pattern
             for (int x = -2; x <= 2; x++) {
                 for (int z = -2; z <= 2; z++) {
-                    if (x == 0 && z == 0) continue; // Skip center where triangle is
+                    if (x == 0 && z == 0)
+                        continue; // Skip center where triangle is
 
                     glm::mat4 cubeModel = glm::translate(glm::mat4(1.0f), glm::vec3(x * 3.0f, 0.0f, z * 3.0f));
-                    cubeModel = glm::rotate(cubeModel, glm::radians(m_rotation * 0.5f + x * 20.0f + z * 20.0f), glm::vec3(1.0f, 1.0f, 0.0f));
+                    cubeModel = glm::rotate(cubeModel, glm::radians(m_rotation * 0.5f + x * 20.0f + z * 20.0f),
+                                            glm::vec3(1.0f, 1.0f, 0.0f));
                     glm::mat4 cubeMVP = viewProj * cubeModel;
 
                     // Different colors based on position
@@ -185,7 +179,7 @@ public:
         ImGui::Separator();
 
         // Camera system toggle
-        const char* systemName = m_useNewCameraSystem ? "NEW Camera System" : "OLD Manual System";
+        const char *systemName = m_useNewCameraSystem ? "NEW Camera System" : "OLD Manual System";
         ImGui::Text("Current Camera: %s", systemName);
 
         if (ImGui::Button("Toggle Camera System (C)")) {
@@ -205,7 +199,7 @@ public:
         if (m_useNewCameraSystem && m_cameraController) {
             ImGui::Text("FOV: %.1f°", m_cameraController->GetCurrentFOV());
 
-            const char* modeNames[] = { "First Person", "Third Person", "Spectator", "Fixed" };
+            const char *modeNames[] = {"First Person", "Third Person", "Spectator", "Fixed"};
             int currentMode = static_cast<int>(m_cameraController->GetMode());
             ImGui::Text("Camera Mode: %s", modeNames[currentMode]);
 
@@ -271,11 +265,16 @@ public:
     void Shutdown() {
         AGL_INFO("Shutting down Advanced Renderer Demo...");
 
-        if (m_shader) m_shader.reset();
-        if (m_triangleVA) m_triangleVA.reset();
-        if (m_triangleVB) m_triangleVB.reset();
-        if (m_cameraController) m_cameraController.reset();
-        if (m_camera) m_camera.reset();
+        if (m_shader)
+            m_shader.reset();
+        if (m_triangleVA)
+            m_triangleVA.reset();
+        if (m_triangleVB)
+            m_triangleVB.reset();
+        if (m_cameraController)
+            m_cameraController.reset();
+        if (m_camera)
+            m_camera.reset();
 
         agl::Renderer::Shutdown();
         agl::Game::Shutdown();
@@ -375,8 +374,10 @@ private:
             m_cameraYaw += static_cast<float>(deltaX);
             m_cameraPitch += static_cast<float>(deltaY);
 
-            if (m_cameraPitch > 89.0f) m_cameraPitch = 89.0f;
-            if (m_cameraPitch < -89.0f) m_cameraPitch = -89.0f;
+            if (m_cameraPitch > 89.0f)
+                m_cameraPitch = 89.0f;
+            if (m_cameraPitch < -89.0f)
+                m_cameraPitch = -89.0f;
         }
 
         // Keyboard camera controls (old system)
@@ -401,10 +402,14 @@ private:
         }
 
         // Constrain values
-        if (m_cameraDistance < 1.0f) m_cameraDistance = 1.0f;
-        if (m_cameraDistance > 20.0f) m_cameraDistance = 20.0f;
-        if (m_cameraPitch > 89.0f) m_cameraPitch = 89.0f;
-        if (m_cameraPitch < -89.0f) m_cameraPitch = -89.0f;
+        if (m_cameraDistance < 1.0f)
+            m_cameraDistance = 1.0f;
+        if (m_cameraDistance > 20.0f)
+            m_cameraDistance = 20.0f;
+        if (m_cameraPitch > 89.0f)
+            m_cameraPitch = 89.0f;
+        if (m_cameraPitch < -89.0f)
+            m_cameraPitch = -89.0f;
 
         // Reset with R key
         if (GetInput()->IsKeyPressed(GLFW_KEY_R)) {

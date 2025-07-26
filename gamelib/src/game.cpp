@@ -1,13 +1,13 @@
 #include "game.h"
-#include <chrono>
-#include <algorithm>
 #include <GLFW/glfw3.h>
+#include <algorithm>
+#include <chrono>
 
 #if defined(__APPLE__)
-    #define GL_SILENCE_DEPRECATION
-    #include <OpenGL/gl3.h>
+#define GL_SILENCE_DEPRECATION
+#include <OpenGL/gl3.h>
 #else
-    #include <GL/gl.h>
+#include <GL/gl.h>
 #endif
 
 #include <imgui.h>
@@ -17,20 +17,14 @@
 namespace agl {
 
 Game::Game()
-    : m_running(false),
-      m_lastFrameTime(0.0f),
-      m_deltaTime(0.0f),
-      m_fps(0.0f),
-      m_averageDeltaTime(0.0f),
-      m_frameTimeAccumulator(0.0f),
-      m_frameCount(0) {
-}
+    : m_running(false), m_lastFrameTime(0.0f), m_deltaTime(0.0f), m_fps(0.0f), m_averageDeltaTime(0.0f),
+      m_frameTimeAccumulator(0.0f), m_frameCount(0) {}
 
 Game::~Game() {
     Shutdown();
 }
 
-bool Game::Initialize(int width, int height, const char* title) {
+bool Game::Initialize(int width, int height, const char *title) {
     // Initialize Logger first
     Logger::Initialize();
 
@@ -46,7 +40,6 @@ bool Game::Initialize(int width, int height, const char* title) {
         return false;
     }
 
-
     // Initialize input
     m_input = std::make_unique<Input>();
     m_input->Initialize(m_window->GetNativeWindow());
@@ -54,13 +47,14 @@ bool Game::Initialize(int width, int height, const char* title) {
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    ImGuiIO &io = ImGui::GetIO();
+    (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
     // Setup Platform/Renderer backends
-    const char* glsl_version = "#version 330";
+    const char *glsl_version = "#version 330";
     ImGui_ImplGlfw_InitForOpenGL(m_window->GetNativeWindow(), true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
@@ -73,9 +67,7 @@ bool Game::Initialize(int width, int height, const char* title) {
         glViewport(0, 0, width, height);
     });
 
-    m_window->SetCloseCallback([this]() {
-        m_running = false;
-    });
+    m_window->SetCloseCallback([this]() { m_running = false; });
 
     // Set input callbacks
     m_input->SetKeyCallback([this](int key, KeyState state) {
@@ -147,8 +139,8 @@ void Game::Run() {
             frameTimeHistory[frameTimeOffset] = m_deltaTime * 1000.0f;
             frameTimeOffset = (frameTimeOffset + 1) % 100;
 
-            ImGui::PlotLines("Frame Time (ms)", frameTimeHistory, 100, frameTimeOffset,
-                            nullptr, 0.0f, MAX_DELTA_TIME * 1000.0f, ImVec2(0, 80));
+            ImGui::PlotLines("Frame Time (ms)", frameTimeHistory, 100, frameTimeOffset, nullptr, 0.0f,
+                             MAX_DELTA_TIME * 1000.0f, ImVec2(0, 80));
 
             ImGui::Separator();
             ImGui::Text("Input Information:");
@@ -167,13 +159,19 @@ void Game::Run() {
 
             // Key states
             ImGui::Text("Key States:");
-            if (m_input->IsKeyHeld(GLFW_KEY_W)) ImGui::Text("W is held");
-            if (m_input->IsKeyHeld(GLFW_KEY_A)) ImGui::Text("A is held");
-            if (m_input->IsKeyHeld(GLFW_KEY_S)) ImGui::Text("S is held");
-            if (m_input->IsKeyHeld(GLFW_KEY_D)) ImGui::Text("D is held");
+            if (m_input->IsKeyHeld(GLFW_KEY_W))
+                ImGui::Text("W is held");
+            if (m_input->IsKeyHeld(GLFW_KEY_A))
+                ImGui::Text("A is held");
+            if (m_input->IsKeyHeld(GLFW_KEY_S))
+                ImGui::Text("S is held");
+            if (m_input->IsKeyHeld(GLFW_KEY_D))
+                ImGui::Text("D is held");
 
-            if (m_input->IsMouseButtonHeld(MouseButton::Left)) ImGui::Text("Left mouse button held");
-            if (m_input->IsMouseButtonHeld(MouseButton::Right)) ImGui::Text("Right mouse button held");
+            if (m_input->IsMouseButtonHeld(MouseButton::Left))
+                ImGui::Text("Left mouse button held");
+            if (m_input->IsMouseButtonHeld(MouseButton::Right))
+                ImGui::Text("Right mouse button held");
 
             ImGui::End();
         }
@@ -237,11 +235,11 @@ void Game::CalculateDeltaTime() {
         static float fpsLogTimer = 0.0f;
         fpsLogTimer += FPS_UPDATE_INTERVAL;
         if (fpsLogTimer >= 5.0f) {
-            AGL_CORE_TRACE("FPS: {:.1f}, Avg Delta: {:.3f}ms, Current Delta: {:.3f}ms",
-                          m_fps, m_averageDeltaTime * 1000.0f, m_deltaTime * 1000.0f);
+            AGL_CORE_TRACE("FPS: {:.1f}, Avg Delta: {:.3f}ms, Current Delta: {:.3f}ms", m_fps,
+                           m_averageDeltaTime * 1000.0f, m_deltaTime * 1000.0f);
             fpsLogTimer = 0.0f;
         }
     }
 }
 
-}
+} // namespace agl

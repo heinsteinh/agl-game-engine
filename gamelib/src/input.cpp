@@ -4,22 +4,14 @@
 namespace agl {
 
 Input::Input()
-    : m_window(nullptr)
-    , m_mouseX(0.0)
-    , m_mouseY(0.0)
-    , m_previousMouseX(0.0)
-    , m_previousMouseY(0.0)
-    , m_mouseDeltaX(0.0)
-    , m_mouseDeltaY(0.0)
-    , m_scrollX(0.0)
-    , m_scrollY(0.0) {
-}
+    : m_window(nullptr), m_mouseX(0.0), m_mouseY(0.0), m_previousMouseX(0.0), m_previousMouseY(0.0), m_mouseDeltaX(0.0),
+      m_mouseDeltaY(0.0), m_scrollX(0.0), m_scrollY(0.0) {}
 
 Input::~Input() {
     // Cleanup if needed
 }
 
-void Input::Initialize(GLFWwindow* window) {
+void Input::Initialize(GLFWwindow *window) {
     m_window = window;
 
     if (m_window) {
@@ -108,7 +100,7 @@ bool Input::IsMouseButtonHeld(MouseButton button) const {
     return it != m_mouseButtonStates.end() && it->second == KeyState::Pressed;
 }
 
-void Input::GetMousePosition(double& x, double& y) const {
+void Input::GetMousePosition(double &x, double &y) const {
     x = m_mouseX;
     y = m_mouseY;
 }
@@ -121,12 +113,12 @@ double Input::GetMouseY() const {
     return m_mouseY;
 }
 
-void Input::GetMouseDelta(double& deltaX, double& deltaY) const {
+void Input::GetMouseDelta(double &deltaX, double &deltaY) const {
     deltaX = m_mouseDeltaX;
     deltaY = m_mouseDeltaY;
 }
 
-void Input::GetScrollOffset(double& xOffset, double& yOffset) const {
+void Input::GetScrollOffset(double &xOffset, double &yOffset) const {
     xOffset = m_scrollX;
     yOffset = m_scrollY;
 }
@@ -138,8 +130,8 @@ void Input::SetCursorMode(int mode) {
 }
 
 // Static GLFW callbacks
-void Input::GLFWKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    Input* input = static_cast<Input*>(glfwGetWindowUserPointer(window));
+void Input::GLFWKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+    Input *input = static_cast<Input *>(glfwGetWindowUserPointer(window));
     if (input) {
         KeyState state = static_cast<KeyState>(action);
         input->m_keyStates[key] = state;
@@ -160,8 +152,8 @@ void Input::GLFWKeyCallback(GLFWwindow* window, int key, int scancode, int actio
     }
 }
 
-void Input::GLFWMouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
-    Input* input = static_cast<Input*>(glfwGetWindowUserPointer(window));
+void Input::GLFWMouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
+    Input *input = static_cast<Input *>(glfwGetWindowUserPointer(window));
     if (input) {
         KeyState state = static_cast<KeyState>(action);
         input->m_mouseButtonStates[button] = state;
@@ -184,8 +176,8 @@ void Input::GLFWMouseButtonCallback(GLFWwindow* window, int button, int action, 
     }
 }
 
-void Input::GLFWCursorPositionCallback(GLFWwindow* window, double xpos, double ypos) {
-    Input* input = static_cast<Input*>(glfwGetWindowUserPointer(window));
+void Input::GLFWCursorPositionCallback(GLFWwindow *window, double xpos, double ypos) {
+    Input *input = static_cast<Input *>(glfwGetWindowUserPointer(window));
     if (input) {
         input->m_mouseX = xpos;
         input->m_mouseY = ypos;
@@ -200,8 +192,8 @@ void Input::GLFWCursorPositionCallback(GLFWwindow* window, double xpos, double y
     }
 }
 
-void Input::GLFWScrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
-    Input* input = static_cast<Input*>(glfwGetWindowUserPointer(window));
+void Input::GLFWScrollCallback(GLFWwindow *window, double xoffset, double yoffset) {
+    Input *input = static_cast<Input *>(glfwGetWindowUserPointer(window));
     if (input) {
         input->m_scrollX = xoffset;
         input->m_scrollY = yoffset;
@@ -216,4 +208,4 @@ void Input::GLFWScrollCallback(GLFWwindow* window, double xoffset, double yoffse
     }
 }
 
-}
+} // namespace agl

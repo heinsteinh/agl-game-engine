@@ -10,9 +10,7 @@
 
 namespace agl {
 
-Window::Window()
-    : m_window(nullptr), m_width(0), m_height(0), m_title(""), m_vsyncEnabled(true) {
-}
+Window::Window() : m_window(nullptr), m_width(0), m_height(0), m_title(""), m_vsyncEnabled(true) {}
 
 Window::~Window() {
     Destroy();
@@ -40,7 +38,7 @@ void Window::Terminate() {
     glfwTerminate();
 }
 
-    bool Window::Create(int width, int height, const char *title) {
+bool Window::Create(int width, int height, const char *title) {
     m_width = width;
     m_height = height;
     m_title = title;
@@ -69,7 +67,7 @@ void Window::Terminate() {
     return true;
 }
 
-    void Window::Destroy() {
+void Window::Destroy() {
     if (m_window) {
         glfwDestroyWindow(m_window);
         m_window = nullptr;
@@ -116,7 +114,7 @@ void Window::SetVSync(bool enabled) {
     glfwSwapInterval(enabled ? 1 : 0);
 }
 
-    // Static GLFW callbacks
+// Static GLFW callbacks
 void Window::FramebufferSizeCallback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
 
@@ -152,4 +150,4 @@ void Window::ErrorCallback(int error, const char *description) {
     std::cerr << "GLFW Error (" << error << "): " << description << std::endl;
 }
 
-}
+} // namespace agl

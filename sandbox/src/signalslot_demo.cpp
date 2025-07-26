@@ -1,6 +1,6 @@
 #include "agl.h"
-#include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
 class SignalSlotDemoGame : public agl::Game {
 private:
@@ -22,7 +22,7 @@ private:
     bool m_showDemo = true;
 
 public:
-    bool Initialize(int width = 1024, int height = 768, const char* title = "SigSlot & DispatchQueue Demo") {
+    bool Initialize(int width = 1024, int height = 768, const char *title = "SigSlot & DispatchQueue Demo") {
         if (!agl::Game::Initialize(width, height, title)) {
             return false;
         }
@@ -46,16 +46,14 @@ public:
 
 private:
     void SetupInputSlots() {
-        auto* input = GetInput();
+        auto *input = GetInput();
 
         // Escape key handler
         m_escapeKeySlot = std::make_unique<agl::Slot<int>>([this](int key) {
             if (key == GLFW_KEY_ESCAPE) {
                 AGL_INFO("Escape key pressed - requesting shutdown via DispatchQueue");
                 // Use DispatchQueue to defer the shutdown to avoid immediate exit during callback
-                RunOnMainThread([this]() {
-                    GetWindow()->SetShouldClose(true);
-                });
+                RunOnMainThread([this]() { GetWindow()->SetShouldClose(true); });
             }
             m_keyPressCount++;
         });
@@ -63,11 +61,17 @@ private:
 
         // Mouse click handler
         m_mouseClickSlot = std::make_unique<agl::Slot<agl::MouseButton>>([this](agl::MouseButton button) {
-            const char* buttonName = "Unknown";
+            const char *buttonName = "Unknown";
             switch (button) {
-                case agl::MouseButton::Left: buttonName = "Left"; break;
-                case agl::MouseButton::Right: buttonName = "Right"; break;
-                case agl::MouseButton::Middle: buttonName = "Middle"; break;
+            case agl::MouseButton::Left:
+                buttonName = "Left";
+                break;
+            case agl::MouseButton::Right:
+                buttonName = "Right";
+                break;
+            case agl::MouseButton::Middle:
+                buttonName = "Middle";
+                break;
             }
 
             AGL_INFO("Mouse button clicked: {}", buttonName);
@@ -97,7 +101,7 @@ private:
     }
 
     void SetupWindowSlots() {
-        auto* window = GetWindow();
+        auto *window = GetWindow();
 
         // Window resize handler
         m_windowResizeSlot = std::make_unique<agl::Slot<int, int>>([this](int width, int height) {
@@ -178,9 +182,7 @@ public:
             if (ImGui::Button("Test Multiple Tasks")) {
                 // Queue multiple tasks
                 for (int i = 0; i < 5; ++i) {
-                    RunOnMainThread([i]() {
-                        AGL_INFO("Task {} executed", i + 1);
-                    });
+                    RunOnMainThread([i]() { AGL_INFO("Task {} executed", i + 1); });
                 }
             }
 

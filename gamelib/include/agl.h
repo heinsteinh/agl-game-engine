@@ -4,14 +4,14 @@
 // AGL Game Engine - Example usage header
 // This demonstrates how to use the encapsulated window and input systems
 
-#include "game.h"
-#include "window.h"
-#include "input.h"
-#include "Logger.h"
 #include "Camera.h"
 #include "CameraController.h"
-#include "SigSlot.h"
 #include "DispatchQueue.h"
+#include "Logger.h"
+#include "SigSlot.h"
+#include "game.h"
+#include "input.h"
+#include "window.h"
 #include <imgui.h>
 
 // All AGL (A Graphics Library) classes are in the agl namespace
@@ -77,25 +77,25 @@ public:
 */
 
 namespace agl {
-    // Forward declarations for convenience
-    class Game;
-    class Window;
-    class Input;
+// Forward declarations for convenience
+class Game;
+class Window;
+class Input;
 
-    // Key and mouse constants for convenience
-    namespace Keys {
-        constexpr int Space = GLFW_KEY_SPACE;
-        constexpr int Enter = GLFW_KEY_ENTER;
-        constexpr int Escape = GLFW_KEY_ESCAPE;
-        constexpr int W = GLFW_KEY_W;
-        constexpr int A = GLFW_KEY_A;
-        constexpr int S = GLFW_KEY_S;
-        constexpr int D = GLFW_KEY_D;
-        constexpr int Up = GLFW_KEY_UP;
-        constexpr int Down = GLFW_KEY_DOWN;
-        constexpr int Left = GLFW_KEY_LEFT;
-        constexpr int Right = GLFW_KEY_RIGHT;
-    }
-}
+// Key and mouse constants for convenience
+namespace Keys {
+constexpr int Space = GLFW_KEY_SPACE;
+constexpr int Enter = GLFW_KEY_ENTER;
+constexpr int Escape = GLFW_KEY_ESCAPE;
+constexpr int W = GLFW_KEY_W;
+constexpr int A = GLFW_KEY_A;
+constexpr int S = GLFW_KEY_S;
+constexpr int D = GLFW_KEY_D;
+constexpr int Up = GLFW_KEY_UP;
+constexpr int Down = GLFW_KEY_DOWN;
+constexpr int Left = GLFW_KEY_LEFT;
+constexpr int Right = GLFW_KEY_RIGHT;
+} // namespace Keys
+} // namespace agl
 
 #endif // AGL_H

@@ -1,6 +1,6 @@
 #include "agl.h"
-#include <thread>
 #include <chrono>
+#include <thread>
 
 class DeltaTimeBenchmark : public agl::Game {
 private:
@@ -32,8 +32,8 @@ public:
         static float logTimer = 0.0f;
         logTimer += deltaTime;
         if (logTimer >= 2.0f) {
-            AGL_INFO("Current Performance - FPS: {:.1f}, Delta: {:.3f}ms, Avg Delta: {:.3f}ms",
-                    GetFPS(), deltaTime * 1000.0f, GetAverageDeltaTime() * 1000.0f);
+            AGL_INFO("Current Performance - FPS: {:.1f}, Delta: {:.3f}ms, Avg Delta: {:.3f}ms", GetFPS(),
+                     deltaTime * 1000.0f, GetAverageDeltaTime() * 1000.0f);
             logTimer = 0.0f;
         }
     }
@@ -71,8 +71,7 @@ public:
         frameHistory[historyIndex] = GetDeltaTime() * 1000.0f;
         historyIndex = (historyIndex + 1) % 120;
 
-        ImGui::PlotLines("Frame Times (ms)", frameHistory, 120, historyIndex,
-                        nullptr, 0.0f, 50.0f, ImVec2(0, 100));
+        ImGui::PlotLines("Frame Times (ms)", frameHistory, 120, historyIndex, nullptr, 0.0f, 50.0f, ImVec2(0, 100));
 
         // Color-coded performance indicator
         float currentDelta = GetDeltaTime() * 1000.0f;

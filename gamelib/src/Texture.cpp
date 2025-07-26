@@ -1,7 +1,7 @@
 #include "Texture.h"
+#include <algorithm>
 #include <iostream>
 #include <random>
-#include <algorithm>
 #include <unordered_map>
 
 // Include STB for image loading
@@ -13,12 +13,7 @@ namespace agl {
 // ===== Base Texture Class =====
 
 Texture::Texture(GLenum target)
-    : m_textureID(0)
-    , m_target(target)
-    , m_width(0)
-    , m_height(0)
-    , m_format(TextureFormat::RGBA)
-    , m_hasMipmaps(false) {
+    : m_textureID(0), m_target(target), m_width(0), m_height(0), m_format(TextureFormat::RGBA), m_hasMipmaps(false) {
     CreateTexture();
 }
 
@@ -28,20 +23,16 @@ Texture::~Texture() {
     }
 }
 
-Texture::Texture(Texture&& other) noexcept
-    : m_textureID(other.m_textureID)
-    , m_target(other.m_target)
-    , m_width(other.m_width)
-    , m_height(other.m_height)
-    , m_format(other.m_format)
-    , m_hasMipmaps(other.m_hasMipmaps) {
+Texture::Texture(Texture &&other) noexcept
+    : m_textureID(other.m_textureID), m_target(other.m_target), m_width(other.m_width), m_height(other.m_height),
+      m_format(other.m_format), m_hasMipmaps(other.m_hasMipmaps) {
     other.m_textureID = 0;
     other.m_width = 0;
     other.m_height = 0;
     other.m_hasMipmaps = false;
 }
 
-Texture& Texture::operator=(Texture&& other) noexcept {
+Texture &Texture::operator=(Texture &&other) noexcept {
     if (this != &other) {
         if (m_textureID != 0) {
             glDeleteTextures(1, &m_textureID);
@@ -89,7 +80,7 @@ void Texture::SetWrap(TextureWrap wrapS, TextureWrap wrapT) {
 
 void Texture::SetBorderColor(float r, float g, float b, float a) {
     Bind();
-    float borderColor[] = { r, g, b, a };
+    float borderColor[] = {r, g, b, a};
     glTexParameterfv(m_target, GL_TEXTURE_BORDER_COLOR, borderColor);
 }
 
@@ -101,17 +92,14 @@ void Texture::GenerateMipmaps() {
 
 // ===== Texture2D Class =====
 
-Texture2D::Texture2D()
-    : Texture(GL_TEXTURE_2D)
-    , m_dataType(TextureDataType::UnsignedByte) {
+Texture2D::Texture2D() : Texture(GL_TEXTURE_2D), m_dataType(TextureDataType::UnsignedByte) {
     // Set default filtering
     SetFilter(TextureFilter::Linear, TextureFilter::Linear);
     SetWrap(TextureWrap::Repeat, TextureWrap::Repeat);
 }
 
-void Texture2D::CreateFromData(uint32_t width, uint32_t height,
-                             TextureFormat format, TextureDataType dataType,
-                             const void* data) {
+void Texture2D::CreateFromData(uint32_t width, uint32_t height, TextureFormat format, TextureDataType dataType,
+                               const void *data) {
     m_width = width;
     m_height = height;
     m_format = format;
@@ -124,42 +112,41 @@ void Texture2D::CreateFromData(uint32_t width, uint32_t height,
     GLenum glFormat;
 
     switch (format) {
-        case TextureFormat::RGB:
-        case TextureFormat::RGB16F:
-        case TextureFormat::RGB32F:
-            glFormat = GL_RGB;
-            break;
-        case TextureFormat::RGBA:
-        case TextureFormat::RGBA16F:
-        case TextureFormat::RGBA32F:
-            glFormat = GL_RGBA;
-            break;
-        case TextureFormat::R:
-            glFormat = GL_RED;
-            break;
-        case TextureFormat::RG:
-            glFormat = GL_RG;
-            break;
-        case TextureFormat::Depth:
-            glFormat = GL_DEPTH_COMPONENT;
-            break;
-        case TextureFormat::DepthStencil:
-            glFormat = GL_DEPTH_STENCIL;
-            break;
-        default:
-            glFormat = GL_RGBA;
-            break;
+    case TextureFormat::RGB:
+    case TextureFormat::RGB16F:
+    case TextureFormat::RGB32F:
+        glFormat = GL_RGB;
+        break;
+    case TextureFormat::RGBA:
+    case TextureFormat::RGBA16F:
+    case TextureFormat::RGBA32F:
+        glFormat = GL_RGBA;
+        break;
+    case TextureFormat::R:
+        glFormat = GL_RED;
+        break;
+    case TextureFormat::RG:
+        glFormat = GL_RG;
+        break;
+    case TextureFormat::Depth:
+        glFormat = GL_DEPTH_COMPONENT;
+        break;
+    case TextureFormat::DepthStencil:
+        glFormat = GL_DEPTH_STENCIL;
+        break;
+    default:
+        glFormat = GL_RGBA;
+        break;
     }
 
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0,
-                 glFormat, static_cast<GLenum>(dataType), data);
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, glFormat, static_cast<GLenum>(dataType), data);
 }
 
-bool Texture2D::LoadFromFile(const std::string& filepath, bool flipVertically) {
+bool Texture2D::LoadFromFile(const std::string &filepath, bool flipVertically) {
     stbi_set_flip_vertically_on_load(flipVertically);
 
     int width, height, channels;
-    unsigned char* data = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
+    unsigned char *data = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
 
     if (!data) {
         std::cerr << "Failed to load texture: " << filepath << std::endl;
@@ -169,55 +156,65 @@ bool Texture2D::LoadFromFile(const std::string& filepath, bool flipVertically) {
 
     TextureFormat format;
     switch (channels) {
-        case 1: format = TextureFormat::R; break;
-        case 2: format = TextureFormat::RG; break;
-        case 3: format = TextureFormat::RGB; break;
-        case 4: format = TextureFormat::RGBA; break;
-        default:
-            std::cerr << "Unsupported number of channels: " << channels << std::endl;
-            stbi_image_free(data);
-            return false;
+    case 1:
+        format = TextureFormat::R;
+        break;
+    case 2:
+        format = TextureFormat::RG;
+        break;
+    case 3:
+        format = TextureFormat::RGB;
+        break;
+    case 4:
+        format = TextureFormat::RGBA;
+        break;
+    default:
+        std::cerr << "Unsupported number of channels: " << channels << std::endl;
+        stbi_image_free(data);
+        return false;
     }
 
     CreateFromData(width, height, format, TextureDataType::UnsignedByte, data);
 
     stbi_image_free(data);
 
-    std::cout << "Loaded texture: " << filepath << " (" << width << "x" << height << ", " << channels << " channels)" << std::endl;
+    std::cout << "Loaded texture: " << filepath << " (" << width << "x" << height << ", " << channels << " channels)"
+              << std::endl;
     return true;
 }
 
-void Texture2D::SetData(const void* data, uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
-    if (width == 0) width = m_width - x;
-    if (height == 0) height = m_height - y;
+void Texture2D::SetData(const void *data, uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+    if (width == 0)
+        width = m_width - x;
+    if (height == 0)
+        height = m_height - y;
 
     Bind();
 
     GLenum format;
     switch (m_format) {
-        case TextureFormat::RGB:
-        case TextureFormat::RGB16F:
-        case TextureFormat::RGB32F:
-            format = GL_RGB;
-            break;
-        case TextureFormat::RGBA:
-        case TextureFormat::RGBA16F:
-        case TextureFormat::RGBA32F:
-            format = GL_RGBA;
-            break;
-        case TextureFormat::R:
-            format = GL_RED;
-            break;
-        case TextureFormat::RG:
-            format = GL_RG;
-            break;
-        default:
-            format = GL_RGBA;
-            break;
+    case TextureFormat::RGB:
+    case TextureFormat::RGB16F:
+    case TextureFormat::RGB32F:
+        format = GL_RGB;
+        break;
+    case TextureFormat::RGBA:
+    case TextureFormat::RGBA16F:
+    case TextureFormat::RGBA32F:
+        format = GL_RGBA;
+        break;
+    case TextureFormat::R:
+        format = GL_RED;
+        break;
+    case TextureFormat::RG:
+        format = GL_RG;
+        break;
+    default:
+        format = GL_RGBA;
+        break;
     }
 
-    glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, format,
-                    static_cast<GLenum>(m_dataType), data);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, format, static_cast<GLenum>(m_dataType), data);
 }
 
 void Texture2D::CreateSolidColor(uint32_t width, uint32_t height, float r, float g, float b, float a) {
@@ -243,12 +240,10 @@ void Texture2D::CreateRandomColor(uint32_t width, uint32_t height, uint32_t seed
     CreateFromData(width, height, TextureFormat::RGBA, TextureDataType::UnsignedByte, data.data());
 }
 
-void Texture2D::CreateCheckerboard(uint32_t width, uint32_t height, uint32_t checkerSize,
-                                 float color1R, float color1G, float color1B,
-                                 float color2R, float color2G, float color2B) {
-    auto data = GenerateCheckerboardData(width, height, checkerSize,
-                                       color1R, color1G, color1B,
-                                       color2R, color2G, color2B);
+void Texture2D::CreateCheckerboard(uint32_t width, uint32_t height, uint32_t checkerSize, float color1R, float color1G,
+                                   float color1B, float color2R, float color2G, float color2B) {
+    auto data =
+        GenerateCheckerboardData(width, height, checkerSize, color1R, color1G, color1B, color2R, color2G, color2B);
     CreateFromData(width, height, TextureFormat::RGB, TextureDataType::UnsignedByte, data.data());
 }
 
@@ -257,12 +252,9 @@ void Texture2D::CreateNoise(uint32_t width, uint32_t height, uint32_t seed) {
     CreateFromData(width, height, TextureFormat::RGB, TextureDataType::UnsignedByte, data.data());
 }
 
-void Texture2D::CreateGradient(uint32_t width, uint32_t height,
-                              float startR, float startG, float startB,
-                              float endR, float endG, float endB,
-                              bool horizontal) {
-    auto data = GenerateGradientData(width, height, startR, startG, startB,
-                                   endR, endG, endB, horizontal);
+void Texture2D::CreateGradient(uint32_t width, uint32_t height, float startR, float startG, float startB, float endR,
+                               float endG, float endB, bool horizontal) {
+    auto data = GenerateGradientData(width, height, startR, startG, startB, endR, endG, endB, horizontal);
     CreateFromData(width, height, TextureFormat::RGB, TextureDataType::UnsignedByte, data.data());
 }
 
@@ -287,30 +279,23 @@ std::vector<uint8_t> Texture2D::GenerateRandomColorData(uint32_t width, uint32_t
     return data;
 }
 
-std::vector<uint8_t> Texture2D::GenerateCheckerboardData(uint32_t width, uint32_t height,
-                                                        uint32_t checkerSize,
-                                                        float color1R, float color1G, float color1B,
-                                                        float color2R, float color2G, float color2B) {
+std::vector<uint8_t> Texture2D::GenerateCheckerboardData(uint32_t width, uint32_t height, uint32_t checkerSize,
+                                                         float color1R, float color1G, float color1B, float color2R,
+                                                         float color2G, float color2B) {
     std::vector<uint8_t> data(width * height * 3);
 
-    uint8_t color1[3] = {
-        static_cast<uint8_t>(color1R * 255.0f),
-        static_cast<uint8_t>(color1G * 255.0f),
-        static_cast<uint8_t>(color1B * 255.0f)
-    };
+    uint8_t color1[3] = {static_cast<uint8_t>(color1R * 255.0f), static_cast<uint8_t>(color1G * 255.0f),
+                         static_cast<uint8_t>(color1B * 255.0f)};
 
-    uint8_t color2[3] = {
-        static_cast<uint8_t>(color2R * 255.0f),
-        static_cast<uint8_t>(color2G * 255.0f),
-        static_cast<uint8_t>(color2B * 255.0f)
-    };
+    uint8_t color2[3] = {static_cast<uint8_t>(color2R * 255.0f), static_cast<uint8_t>(color2G * 255.0f),
+                         static_cast<uint8_t>(color2B * 255.0f)};
 
     for (uint32_t y = 0; y < height; ++y) {
         for (uint32_t x = 0; x < width; ++x) {
             uint32_t index = (y * width + x) * 3;
 
             bool useColor1 = ((x / checkerSize) + (y / checkerSize)) % 2 == 0;
-            uint8_t* color = useColor1 ? color1 : color2;
+            uint8_t *color = useColor1 ? color1 : color2;
 
             data[index + 0] = color[0];
             data[index + 1] = color[1];
@@ -334,10 +319,9 @@ std::vector<uint8_t> Texture2D::GenerateNoiseData(uint32_t width, uint32_t heigh
     return data;
 }
 
-std::vector<uint8_t> Texture2D::GenerateGradientData(uint32_t width, uint32_t height,
-                                                    float startR, float startG, float startB,
-                                                    float endR, float endG, float endB,
-                                                    bool horizontal) {
+std::vector<uint8_t> Texture2D::GenerateGradientData(uint32_t width, uint32_t height, float startR, float startG,
+                                                     float startB, float endR, float endG, float endB,
+                                                     bool horizontal) {
     std::vector<uint8_t> data(width * height * 3);
 
     for (uint32_t y = 0; y < height; ++y) {
@@ -345,7 +329,7 @@ std::vector<uint8_t> Texture2D::GenerateGradientData(uint32_t width, uint32_t he
             uint32_t index = (y * width + x) * 3;
 
             float t = horizontal ? static_cast<float>(x) / static_cast<float>(width - 1)
-                                : static_cast<float>(y) / static_cast<float>(height - 1);
+                                 : static_cast<float>(y) / static_cast<float>(height - 1);
 
             float r = startR + t * (endR - startR);
             float g = startG + t * (endG - startG);
@@ -367,7 +351,7 @@ std::unique_ptr<Texture2D> Texture2D::Create(uint32_t width, uint32_t height, Te
     return texture;
 }
 
-std::unique_ptr<Texture2D> Texture2D::LoadFromFileStatic(const std::string& filepath) {
+std::unique_ptr<Texture2D> Texture2D::LoadFromFileStatic(const std::string &filepath) {
     auto texture = std::make_unique<Texture2D>();
     if (texture->LoadFromFile(filepath)) {
         return texture;
@@ -375,15 +359,15 @@ std::unique_ptr<Texture2D> Texture2D::LoadFromFileStatic(const std::string& file
     return nullptr;
 }
 
-std::unique_ptr<Texture2D> Texture2D::CreateSolidColorTexture(uint32_t width, uint32_t height,
-                                                          float r, float g, float b, float a) {
+std::unique_ptr<Texture2D> Texture2D::CreateSolidColorTexture(uint32_t width, uint32_t height, float r, float g,
+                                                              float b, float a) {
     auto texture = std::make_unique<Texture2D>();
     texture->CreateSolidColor(width, height, r, g, b, a);
     return texture;
 }
 
-std::unique_ptr<Texture2D> Texture2D::CreateRandomColorTexture(uint32_t width, uint32_t height,
-                                                           uint32_t seed, float alpha) {
+std::unique_ptr<Texture2D> Texture2D::CreateRandomColorTexture(uint32_t width, uint32_t height, uint32_t seed,
+                                                               float alpha) {
     auto texture = std::make_unique<Texture2D>();
     texture->CreateRandomColor(width, height, seed, alpha);
     return texture;
@@ -399,7 +383,7 @@ std::unique_ptr<Texture2D> Texture2D::CreateBlack(uint32_t size) {
 
 // ===== TextureManager Class =====
 
-TextureManager& TextureManager::Instance() {
+TextureManager &TextureManager::Instance() {
     static TextureManager instance;
     return instance;
 }
@@ -413,7 +397,7 @@ void TextureManager::CreateDefaultTextures() {
     m_blackTexture = Texture2D::CreateBlack(1);
 }
 
-std::shared_ptr<Texture2D> TextureManager::LoadTexture(const std::string& name, const std::string& filepath) {
+std::shared_ptr<Texture2D> TextureManager::LoadTexture(const std::string &name, const std::string &filepath) {
     auto it = m_textures.find(name);
     if (it != m_textures.end()) {
         return it->second;
@@ -429,9 +413,9 @@ std::shared_ptr<Texture2D> TextureManager::LoadTexture(const std::string& name, 
     return nullptr;
 }
 
-std::shared_ptr<Texture2D> TextureManager::CreateSolidColorTexture(const std::string& name,
-                                                                 uint32_t width, uint32_t height,
-                                                                 float r, float g, float b, float a) {
+std::shared_ptr<Texture2D> TextureManager::CreateSolidColorTexture(const std::string &name, uint32_t width,
+                                                                   uint32_t height, float r, float g, float b,
+                                                                   float a) {
     auto it = m_textures.find(name);
     if (it != m_textures.end()) {
         return it->second;
@@ -447,9 +431,8 @@ std::shared_ptr<Texture2D> TextureManager::CreateSolidColorTexture(const std::st
     return nullptr;
 }
 
-std::shared_ptr<Texture2D> TextureManager::CreateRandomColorTexture(const std::string& name,
-                                                                  uint32_t width, uint32_t height,
-                                                                  uint32_t seed, float alpha) {
+std::shared_ptr<Texture2D> TextureManager::CreateRandomColorTexture(const std::string &name, uint32_t width,
+                                                                    uint32_t height, uint32_t seed, float alpha) {
     auto it = m_textures.find(name);
     if (it != m_textures.end()) {
         return it->second;
@@ -465,7 +448,7 @@ std::shared_ptr<Texture2D> TextureManager::CreateRandomColorTexture(const std::s
     return nullptr;
 }
 
-std::shared_ptr<Texture2D> TextureManager::GetTexture(const std::string& name) {
+std::shared_ptr<Texture2D> TextureManager::GetTexture(const std::string &name) {
     auto it = m_textures.find(name);
     if (it != m_textures.end()) {
         return it->second;
@@ -473,7 +456,7 @@ std::shared_ptr<Texture2D> TextureManager::GetTexture(const std::string& name) {
     return nullptr;
 }
 
-void TextureManager::RemoveTexture(const std::string& name) {
+void TextureManager::RemoveTexture(const std::string &name) {
     m_textures.erase(name);
 }
 

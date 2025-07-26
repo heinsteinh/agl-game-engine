@@ -1,46 +1,44 @@
+#include <chrono>
 #include <iostream>
 #include <memory>
 #include <thread>
-#include <chrono>
 
 // Simple test to verify our Signal/Slot and DispatchQueue systems work
 // This is a minimal test without OpenGL/GLFW dependencies
 
 namespace agl {
-    // Minimal Signal/Slot implementation for testing
-    template<typename... Args>
-    class Signal {
-    public:
-        void Connect(std::function<void(Args...)> callback) {
-            m_callbacks.push_back(callback);
-        }
+// Minimal Signal/Slot implementation for testing
+template <typename... Args>
+class Signal {
+public:
+    void Connect(std::function<void(Args...)> callback) {
+        m_callbacks.push_back(callback);
+    }
 
-        void Emit(Args... args) {
-            for (auto& callback : m_callbacks) {
-                callback(args...);
-            }
+    void Emit(Args... args) {
+        for (auto &callback : m_callbacks) {
+            callback(args...);
         }
+    }
 
-    private:
-        std::vector<std::function<void(Args...)>> m_callbacks;
-    };
+private:
+    std::vector<std::function<void(Args...)>> m_callbacks;
+};
 
-    // Minimal DispatchQueue for testing
-    class DispatchQueue {
-    public:
-        template<typename F>
-        void async(F&& task) {
-            std::thread([task = std::forward<F>(task)]() {
-                task();
-            }).detach();
-        }
+// Minimal DispatchQueue for testing
+class DispatchQueue {
+public:
+    template <typename F>
+    void async(F &&task) {
+        std::thread([task = std::forward<F>(task)]() { task(); }).detach();
+    }
 
-        static DispatchQueue& global() {
-            static DispatchQueue instance;
-            return instance;
-        }
-    };
-}
+    static DispatchQueue &global() {
+        static DispatchQueue instance;
+        return instance;
+    }
+};
+} // namespace agl
 
 // Test function
 void TestSignalSlot() {
@@ -52,7 +50,7 @@ void TestSignalSlot() {
     int receivedInt = 0;
     std::string receivedString;
 
-    testSignal.Connect([&](int num, const std::string& str) {
+    testSignal.Connect([&](int num, const std::string &str) {
         callbackTriggered = true;
         receivedInt = num;
         receivedString = str;

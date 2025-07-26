@@ -3,9 +3,7 @@
 
 namespace agl {
 
-VertexArray::VertexArray()
-    : m_vaoID(0)
-    , m_vertexBufferIndex(0) {
+VertexArray::VertexArray() : m_vaoID(0), m_vertexBufferIndex(0) {
     glGenVertexArrays(1, &m_vaoID);
 }
 
@@ -15,16 +13,14 @@ VertexArray::~VertexArray() {
     }
 }
 
-VertexArray::VertexArray(VertexArray&& other) noexcept
-    : m_vaoID(other.m_vaoID)
-    , m_vertexBuffers(std::move(other.m_vertexBuffers))
-    , m_indexBuffer(std::move(other.m_indexBuffer))
-    , m_vertexBufferIndex(other.m_vertexBufferIndex) {
+VertexArray::VertexArray(VertexArray &&other) noexcept
+    : m_vaoID(other.m_vaoID), m_vertexBuffers(std::move(other.m_vertexBuffers)),
+      m_indexBuffer(std::move(other.m_indexBuffer)), m_vertexBufferIndex(other.m_vertexBufferIndex) {
     other.m_vaoID = 0;
     other.m_vertexBufferIndex = 0;
 }
 
-VertexArray& VertexArray::operator=(VertexArray&& other) noexcept {
+VertexArray &VertexArray::operator=(VertexArray &&other) noexcept {
     if (this != &other) {
         if (m_vaoID != 0) {
             glDeleteVertexArrays(1, &m_vaoID);
@@ -49,7 +45,7 @@ void VertexArray::Unbind() const {
     glBindVertexArray(0);
 }
 
-void VertexArray::AddVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer, const VertexBufferLayout& layout) {
+void VertexArray::AddVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer, const VertexBufferLayout &layout) {
     Bind();
     vertexBuffer->Bind();
 
@@ -64,20 +60,15 @@ void VertexArray::SetIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer) {
     m_indexBuffer = indexBuffer;
 }
 
-void VertexArray::SetupVertexAttributes(const VertexBufferLayout& layout) {
-    const auto& elements = layout.GetElements();
+void VertexArray::SetupVertexAttributes(const VertexBufferLayout &layout) {
+    const auto &elements = layout.GetElements();
 
-    for (const auto& element : elements) {
+    for (const auto &element : elements) {
         glEnableVertexAttribArray(m_vertexBufferIndex);
 
-        glVertexAttribPointer(
-            m_vertexBufferIndex,
-            element.count,
-            static_cast<GLenum>(element.type),
-            element.normalized ? GL_TRUE : GL_FALSE,
-            layout.GetStride(),
-            reinterpret_cast<const void*>(element.offset)
-        );
+        glVertexAttribPointer(m_vertexBufferIndex, element.count, static_cast<GLenum>(element.type),
+                              element.normalized ? GL_TRUE : GL_FALSE, layout.GetStride(),
+                              reinterpret_cast<const void *>(element.offset));
 
         m_vertexBufferIndex++;
     }

@@ -1,22 +1,17 @@
-#include "agl.h"
 #include "Renderer.h"
 #include "Texture.h"
-#include <iostream>
+#include "agl.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
+#include <iostream>
 
 // Texture demo showcasing the AGL texture system
 class TextureDemo : public agl::Game {
 public:
-    TextureDemo()
-        : m_rotation(0.0f)
-        , m_currentTextureIndex(0)
-        , m_regenerateRandom(false) {
-    }
+    TextureDemo() : m_rotation(0.0f), m_currentTextureIndex(0), m_regenerateRandom(false) {}
 
-    bool Initialize(int width = 1024, int height = 768, const char* title = "AGL Texture Demo")
-     {
+    bool Initialize(int width = 1024, int height = 768, const char *title = "AGL Texture Demo") {
         if (!agl::Game::Initialize(width, height, title)) {
             return false;
         }
@@ -34,15 +29,15 @@ public:
         // Create quad vertices with texture coordinates
         float quadVertices[] = {
             // Positions        // Texture Coords
-            -0.8f, -0.8f, 0.0f, 0.0f, 0.0f,  // Bottom-left
-             0.8f, -0.8f, 0.0f, 1.0f, 0.0f,  // Bottom-right
-             0.8f,  0.8f, 0.0f, 1.0f, 1.0f,  // Top-right
-            -0.8f,  0.8f, 0.0f, 0.0f, 1.0f   // Top-left
+            -0.8f, -0.8f, 0.0f, 0.0f, 0.0f, // Bottom-left
+            0.8f,  -0.8f, 0.0f, 1.0f, 0.0f, // Bottom-right
+            0.8f,  0.8f,  0.0f, 1.0f, 1.0f, // Top-right
+            -0.8f, 0.8f,  0.0f, 0.0f, 1.0f  // Top-left
         };
 
         uint32_t quadIndices[] = {
-            0, 1, 2,  // First triangle
-            2, 3, 0   // Second triangle
+            0, 1, 2, // First triangle
+            2, 3, 0  // Second triangle
         };
 
         // Create vertex buffer and layout
@@ -74,12 +69,18 @@ public:
         m_rotation += deltaTime * 30.0f; // 30 degrees per second
 
         // Handle input for texture switching
-        if (GetInput()->IsKeyPressed(GLFW_KEY_1)) m_currentTextureIndex = 0;
-        if (GetInput()->IsKeyPressed(GLFW_KEY_2)) m_currentTextureIndex = 1;
-        if (GetInput()->IsKeyPressed(GLFW_KEY_3)) m_currentTextureIndex = 2;
-        if (GetInput()->IsKeyPressed(GLFW_KEY_4)) m_currentTextureIndex = 3;
-        if (GetInput()->IsKeyPressed(GLFW_KEY_5)) m_currentTextureIndex = 4;
-        if (GetInput()->IsKeyPressed(GLFW_KEY_6)) m_currentTextureIndex = 5;
+        if (GetInput()->IsKeyPressed(GLFW_KEY_1))
+            m_currentTextureIndex = 0;
+        if (GetInput()->IsKeyPressed(GLFW_KEY_2))
+            m_currentTextureIndex = 1;
+        if (GetInput()->IsKeyPressed(GLFW_KEY_3))
+            m_currentTextureIndex = 2;
+        if (GetInput()->IsKeyPressed(GLFW_KEY_4))
+            m_currentTextureIndex = 3;
+        if (GetInput()->IsKeyPressed(GLFW_KEY_5))
+            m_currentTextureIndex = 4;
+        if (GetInput()->IsKeyPressed(GLFW_KEY_6))
+            m_currentTextureIndex = 5;
 
         if (GetInput()->IsKeyPressed(GLFW_KEY_R)) {
             m_regenerateRandom = true;
@@ -116,7 +117,7 @@ public:
             // Draw textured quad
             m_shader->Use();
             m_shader->SetUniform("u_MVP", mvp);
-            m_shader->SetUniform("u_Texture", 0); // Texture slot 0
+            m_shader->SetUniform("u_Texture", 0);                               // Texture slot 0
             m_shader->SetUniform("u_Color", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)); // White tint
 
             agl::Renderer::DrawElements(*m_vertexArray, *m_shader);
@@ -131,14 +132,8 @@ public:
 
         ImGui::Separator();
 
-        const char* textureNames[] = {
-            "Solid Red",
-            "Random Colors",
-            "Checkerboard",
-            "Noise",
-            "Horizontal Gradient",
-            "Vertical Gradient"
-        };
+        const char *textureNames[] = {"Solid Red", "Random Colors",       "Checkerboard",
+                                      "Noise",     "Horizontal Gradient", "Vertical Gradient"};
 
         ImGui::Text("Current Texture: %s", textureNames[m_currentTextureIndex]);
 
@@ -170,7 +165,7 @@ public:
         ImGui::Separator();
         ImGui::Text("Texture Info:");
         if (!m_textures.empty() && m_currentTextureIndex < m_textures.size()) {
-            auto& currentTexture = m_textures[m_currentTextureIndex];
+            auto &currentTexture = m_textures[m_currentTextureIndex];
             ImGui::Text("Size: %ux%u", currentTexture->GetWidth(), currentTexture->GetHeight());
             ImGui::Text("ID: %u", currentTexture->GetID());
         }
@@ -230,9 +225,8 @@ private:
 
         // 3. Checkerboard texture
         auto checkerboard = std::make_unique<agl::Texture2D>();
-        checkerboard->CreateCheckerboard(128, 128, 16,
-                                       1.0f, 1.0f, 1.0f,   // White
-                                       0.0f, 0.0f, 0.0f);  // Black
+        checkerboard->CreateCheckerboard(128, 128, 16, 1.0f, 1.0f, 1.0f, // White
+                                         0.0f, 0.0f, 0.0f);              // Black
         m_textures.push_back(std::move(checkerboard));
 
         // 4. Noise texture
@@ -242,22 +236,20 @@ private:
 
         // 5. Horizontal gradient (red to blue)
         auto hGradient = std::make_unique<agl::Texture2D>();
-        hGradient->CreateGradient(256, 64,
-                                1.0f, 0.0f, 0.0f,   // Red
-                                0.0f, 0.0f, 1.0f,   // Blue
-                                true);              // Horizontal
+        hGradient->CreateGradient(256, 64, 1.0f, 0.0f, 0.0f, // Red
+                                  0.0f, 0.0f, 1.0f,          // Blue
+                                  true);                     // Horizontal
         m_textures.push_back(std::move(hGradient));
 
         // 6. Vertical gradient (yellow to green)
         auto vGradient = std::make_unique<agl::Texture2D>();
-        vGradient->CreateGradient(64, 256,
-                                1.0f, 1.0f, 0.0f,   // Yellow
-                                0.0f, 1.0f, 0.0f,   // Green
-                                false);             // Vertical
+        vGradient->CreateGradient(64, 256, 1.0f, 1.0f, 0.0f, // Yellow
+                                  0.0f, 1.0f, 0.0f,          // Green
+                                  false);                    // Vertical
         m_textures.push_back(std::move(vGradient));
 
         // Set filtering for all textures
-        for (auto& texture : m_textures) {
+        for (auto &texture : m_textures) {
             texture->SetFilter(agl::TextureFilter::Nearest, agl::TextureFilter::Nearest);
             texture->SetWrap(agl::TextureWrap::Repeat, agl::TextureWrap::Repeat);
         }
@@ -269,10 +261,9 @@ private:
         m_projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
 
         // View matrix (camera)
-        m_view = glm::lookAt(
-            glm::vec3(0.0f, 0.0f, 3.0f),   // Camera position
-            glm::vec3(0.0f, 0.0f, 0.0f),   // Look at origin
-            glm::vec3(0.0f, 1.0f, 0.0f)    // Up vector
+        m_view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), // Camera position
+                             glm::vec3(0.0f, 0.0f, 0.0f), // Look at origin
+                             glm::vec3(0.0f, 1.0f, 0.0f)  // Up vector
         );
     }
 };

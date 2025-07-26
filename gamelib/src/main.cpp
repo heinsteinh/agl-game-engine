@@ -1,18 +1,16 @@
 #include "game.h"
-#include <iostream>
+#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <GLFW/glfw3.h>
 #include <imgui.h>
+#include <iostream>
 
 #if defined(__APPLE__)
-    #define GL_SILENCE_DEPRECATION
-    #include <OpenGL/gl3.h>
+#define GL_SILENCE_DEPRECATION
+#include <OpenGL/gl3.h>
 #else
-    #include <GL/gl.h>
+#include <GL/gl.h>
 #endif
-
-
 
 // Custom game class that extends the base Game class
 class MyGame : public agl::Game {
@@ -70,7 +68,8 @@ int main_MyGame() {
     // Test GLM (showing it works)
     glm::vec3 testVector(1.0f, 2.0f, 3.0f);
     glm::mat4 testMatrix = glm::translate(glm::mat4(1.0f), testVector);
-    std::cout << "GLM test vector: (" << testVector.x << ", " << testVector.y << ", " << testVector.z << ")" << std::endl;
+    std::cout << "GLM test vector: (" << testVector.x << ", " << testVector.y << ", " << testVector.z << ")"
+              << std::endl;
 
     // Create and run the game
     MyGame game;

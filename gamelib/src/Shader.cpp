@@ -1,25 +1,21 @@
 #include "Shader.h"
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <vector>
 
 #if defined(__APPLE__)
-    #define GL_SILENCE_DEPRECATION
-    #include <OpenGL/gl3.h>
+#define GL_SILENCE_DEPRECATION
+#include <OpenGL/gl3.h>
 #else
-    #include <GL/gl.h>
+#include <GL/gl.h>
 #endif
-
 
 namespace agl {
 
 // ===== Shader Class =====
 
-Shader::Shader(ShaderType type, const std::string& source)
-    : m_shaderID(0)
-    , m_type(type)
-    , m_compiled(false) {
+Shader::Shader(ShaderType type, const std::string &source) : m_shaderID(0), m_type(type), m_compiled(false) {
 
     m_shaderID = glCreateShader(static_cast<GLenum>(type));
     m_compiled = Compile(source);
@@ -31,16 +27,14 @@ Shader::~Shader() {
     }
 }
 
-Shader::Shader(Shader&& other) noexcept
-    : m_shaderID(other.m_shaderID)
-    , m_type(other.m_type)
-    , m_compiled(other.m_compiled)
-    , m_errorLog(std::move(other.m_errorLog)) {
+Shader::Shader(Shader &&other) noexcept
+    : m_shaderID(other.m_shaderID), m_type(other.m_type), m_compiled(other.m_compiled),
+      m_errorLog(std::move(other.m_errorLog)) {
     other.m_shaderID = 0;
     other.m_compiled = false;
 }
 
-Shader& Shader::operator=(Shader&& other) noexcept {
+Shader &Shader::operator=(Shader &&other) noexcept {
     if (this != &other) {
         if (m_shaderID != 0) {
             glDeleteShader(m_shaderID);
@@ -57,7 +51,7 @@ Shader& Shader::operator=(Shader&& other) noexcept {
     return *this;
 }
 
-std::unique_ptr<Shader> Shader::CreateFromFile(ShaderType type, const std::string& filepath) {
+std::unique_ptr<Shader> Shader::CreateFromFile(ShaderType type, const std::string &filepath) {
     std::string source = ReadFile(filepath);
     if (source.empty()) {
         std::cerr << "Failed to read shader file: " << filepath << std::endl;
@@ -66,12 +60,12 @@ std::unique_ptr<Shader> Shader::CreateFromFile(ShaderType type, const std::strin
     return std::make_unique<Shader>(type, source);
 }
 
-std::unique_ptr<Shader> Shader::CreateFromSource(ShaderType type, const std::string& source) {
+std::unique_ptr<Shader> Shader::CreateFromSource(ShaderType type, const std::string &source) {
     return std::make_unique<Shader>(type, source);
 }
 
-bool Shader::Compile(const std::string& source) {
-    const char* sourceCStr = source.c_str();
+bool Shader::Compile(const std::string &source) {
+    const char *sourceCStr = source.c_str();
     glShaderSource(m_shaderID, 1, &sourceCStr, nullptr);
     glCompileShader(m_shaderID);
 
@@ -93,7 +87,7 @@ bool Shader::Compile(const std::string& source) {
     return true;
 }
 
-std::string Shader::ReadFile(const std::string& filepath) {
+std::string Shader::ReadFile(const std::string &filepath) {
     std::ifstream file(filepath);
     if (!file.is_open()) {
         return "";
@@ -106,9 +100,7 @@ std::string Shader::ReadFile(const std::string& filepath) {
 
 // ===== ShaderProgram Class =====
 
-ShaderProgram::ShaderProgram()
-    : m_programID(0)
-    , m_linked(false) {
+ShaderProgram::ShaderProgram() : m_programID(0), m_linked(false) {
     m_programID = glCreateProgram();
 }
 
@@ -118,17 +110,15 @@ ShaderProgram::~ShaderProgram() {
     }
 }
 
-ShaderProgram::ShaderProgram(ShaderProgram&& other) noexcept
-    : m_programID(other.m_programID)
-    , m_linked(other.m_linked)
-    , m_errorLog(std::move(other.m_errorLog))
-    , m_attachedShaders(std::move(other.m_attachedShaders))
-    , m_uniformLocationCache(std::move(other.m_uniformLocationCache)) {
+ShaderProgram::ShaderProgram(ShaderProgram &&other) noexcept
+    : m_programID(other.m_programID), m_linked(other.m_linked), m_errorLog(std::move(other.m_errorLog)),
+      m_attachedShaders(std::move(other.m_attachedShaders)),
+      m_uniformLocationCache(std::move(other.m_uniformLocationCache)) {
     other.m_programID = 0;
     other.m_linked = false;
 }
 
-ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other) noexcept {
+ShaderProgram &ShaderProgram::operator=(ShaderProgram &&other) noexcept {
     if (this != &other) {
         if (m_programID != 0) {
             glDeleteProgram(m_programID);
@@ -146,7 +136,7 @@ ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other) noexcept {
     return *this;
 }
 
-void ShaderProgram::AttachShader(const Shader& shader) {
+void ShaderProgram::AttachShader(const Shader &shader) {
     if (shader.IsCompiled()) {
         glAttachShader(m_programID, shader.GetID());
     }
@@ -191,7 +181,7 @@ void ShaderProgram::Unuse() const {
     glUseProgram(0);
 }
 
-int ShaderProgram::GetUniformLocation(const std::string& name) const {
+int ShaderProgram::GetUniformLocation(const std::string &name) const {
     auto it = m_uniformLocationCache.find(name);
     if (it != m_uniformLocationCache.end()) {
         return it->second;
@@ -207,71 +197,71 @@ int ShaderProgram::GetUniformLocation(const std::string& name) const {
     return location;
 }
 
-void ShaderProgram::SetUniform(const std::string& name, bool value) {
+void ShaderProgram::SetUniform(const std::string &name, bool value) {
     glUniform1i(GetUniformLocation(name), static_cast<int>(value));
 }
 
-void ShaderProgram::SetUniform(const std::string& name, int value) {
+void ShaderProgram::SetUniform(const std::string &name, int value) {
     glUniform1i(GetUniformLocation(name), value);
 }
 
-void ShaderProgram::SetUniform(const std::string& name, float value) {
+void ShaderProgram::SetUniform(const std::string &name, float value) {
     glUniform1f(GetUniformLocation(name), value);
 }
 
-void ShaderProgram::SetUniform(const std::string& name, const glm::vec2& value) {
+void ShaderProgram::SetUniform(const std::string &name, const glm::vec2 &value) {
     glUniform2fv(GetUniformLocation(name), 1, glm::value_ptr(value));
 }
 
-void ShaderProgram::SetUniform(const std::string& name, const glm::vec3& value) {
+void ShaderProgram::SetUniform(const std::string &name, const glm::vec3 &value) {
     glUniform3fv(GetUniformLocation(name), 1, glm::value_ptr(value));
 }
 
-void ShaderProgram::SetUniform(const std::string& name, const glm::vec4& value) {
+void ShaderProgram::SetUniform(const std::string &name, const glm::vec4 &value) {
     glUniform4fv(GetUniformLocation(name), 1, glm::value_ptr(value));
 }
 
-void ShaderProgram::SetUniform(const std::string& name, const glm::mat2& value) {
+void ShaderProgram::SetUniform(const std::string &name, const glm::mat2 &value) {
     glUniformMatrix2fv(GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value));
 }
 
-void ShaderProgram::SetUniform(const std::string& name, const glm::mat3& value) {
+void ShaderProgram::SetUniform(const std::string &name, const glm::mat3 &value) {
     glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value));
 }
 
-void ShaderProgram::SetUniform(const std::string& name, const glm::mat4& value) {
+void ShaderProgram::SetUniform(const std::string &name, const glm::mat4 &value) {
     glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value));
 }
 
-void ShaderProgram::SetUniform(const std::string& name, const std::vector<int>& values) {
+void ShaderProgram::SetUniform(const std::string &name, const std::vector<int> &values) {
     glUniform1iv(GetUniformLocation(name), static_cast<GLsizei>(values.size()), values.data());
 }
 
-void ShaderProgram::SetUniform(const std::string& name, const std::vector<float>& values) {
+void ShaderProgram::SetUniform(const std::string &name, const std::vector<float> &values) {
     glUniform1fv(GetUniformLocation(name), static_cast<GLsizei>(values.size()), values.data());
 }
 
-void ShaderProgram::SetUniform(const std::string& name, const std::vector<glm::vec2>& values) {
+void ShaderProgram::SetUniform(const std::string &name, const std::vector<glm::vec2> &values) {
     glUniform2fv(GetUniformLocation(name), static_cast<GLsizei>(values.size()), glm::value_ptr(values[0]));
 }
 
-void ShaderProgram::SetUniform(const std::string& name, const std::vector<glm::vec3>& values) {
+void ShaderProgram::SetUniform(const std::string &name, const std::vector<glm::vec3> &values) {
     glUniform3fv(GetUniformLocation(name), static_cast<GLsizei>(values.size()), glm::value_ptr(values[0]));
 }
 
-void ShaderProgram::SetUniform(const std::string& name, const std::vector<glm::vec4>& values) {
+void ShaderProgram::SetUniform(const std::string &name, const std::vector<glm::vec4> &values) {
     glUniform4fv(GetUniformLocation(name), static_cast<GLsizei>(values.size()), glm::value_ptr(values[0]));
 }
 
-void ShaderProgram::BindUniformBlock(const std::string& blockName, uint32_t bindingPoint) {
+void ShaderProgram::BindUniformBlock(const std::string &blockName, uint32_t bindingPoint) {
     uint32_t blockIndex = glGetUniformBlockIndex(m_programID, blockName.c_str());
     if (blockIndex != GL_INVALID_INDEX) {
         glUniformBlockBinding(m_programID, blockIndex, bindingPoint);
     }
 }
 
-std::unique_ptr<ShaderProgram> ShaderProgram::CreateFromFiles(
-    const std::string& vertexPath, const std::string& fragmentPath) {
+std::unique_ptr<ShaderProgram> ShaderProgram::CreateFromFiles(const std::string &vertexPath,
+                                                              const std::string &fragmentPath) {
 
     auto program = std::make_unique<ShaderProgram>();
 
@@ -292,8 +282,9 @@ std::unique_ptr<ShaderProgram> ShaderProgram::CreateFromFiles(
     return program;
 }
 
-std::unique_ptr<ShaderProgram> ShaderProgram::CreateFromFiles(
-    const std::string& vertexPath, const std::string& fragmentPath, const std::string& geometryPath) {
+std::unique_ptr<ShaderProgram> ShaderProgram::CreateFromFiles(const std::string &vertexPath,
+                                                              const std::string &fragmentPath,
+                                                              const std::string &geometryPath) {
 
     auto program = std::make_unique<ShaderProgram>();
 
@@ -316,8 +307,8 @@ std::unique_ptr<ShaderProgram> ShaderProgram::CreateFromFiles(
     return program;
 }
 
-std::unique_ptr<ShaderProgram> ShaderProgram::CreateFromSources(
-    const std::string& vertexSource, const std::string& fragmentSource) {
+std::unique_ptr<ShaderProgram> ShaderProgram::CreateFromSources(const std::string &vertexSource,
+                                                                const std::string &fragmentSource) {
 
     auto program = std::make_unique<ShaderProgram>();
 
@@ -338,8 +329,9 @@ std::unique_ptr<ShaderProgram> ShaderProgram::CreateFromSources(
     return program;
 }
 
-std::unique_ptr<ShaderProgram> ShaderProgram::CreateFromSources(
-    const std::string& vertexSource, const std::string& fragmentSource, const std::string& geometrySource) {
+std::unique_ptr<ShaderProgram> ShaderProgram::CreateFromSources(const std::string &vertexSource,
+                                                                const std::string &fragmentSource,
+                                                                const std::string &geometrySource) {
 
     auto program = std::make_unique<ShaderProgram>();
 
@@ -498,13 +490,13 @@ std::unique_ptr<ShaderProgram> ShaderProgram::CreatePhongShader() {
 
 // ===== ShaderManager Class =====
 
-ShaderManager& ShaderManager::Instance() {
+ShaderManager &ShaderManager::Instance() {
     static ShaderManager instance;
     return instance;
 }
 
-std::shared_ptr<ShaderProgram> ShaderManager::LoadShader(const std::string& name,
-    const std::string& vertexPath, const std::string& fragmentPath) {
+std::shared_ptr<ShaderProgram> ShaderManager::LoadShader(const std::string &name, const std::string &vertexPath,
+                                                         const std::string &fragmentPath) {
 
     auto it = m_shaders.find(name);
     if (it != m_shaders.end()) {
@@ -521,8 +513,9 @@ std::shared_ptr<ShaderProgram> ShaderManager::LoadShader(const std::string& name
     return nullptr;
 }
 
-std::shared_ptr<ShaderProgram> ShaderManager::LoadShader(const std::string& name,
-    const std::string& vertexPath, const std::string& fragmentPath, const std::string& geometryPath) {
+std::shared_ptr<ShaderProgram> ShaderManager::LoadShader(const std::string &name, const std::string &vertexPath,
+                                                         const std::string &fragmentPath,
+                                                         const std::string &geometryPath) {
 
     auto it = m_shaders.find(name);
     if (it != m_shaders.end()) {
@@ -539,7 +532,7 @@ std::shared_ptr<ShaderProgram> ShaderManager::LoadShader(const std::string& name
     return nullptr;
 }
 
-std::shared_ptr<ShaderProgram> ShaderManager::GetShader(const std::string& name) {
+std::shared_ptr<ShaderProgram> ShaderManager::GetShader(const std::string &name) {
     auto it = m_shaders.find(name);
     if (it != m_shaders.end()) {
         return it->second;
@@ -547,7 +540,7 @@ std::shared_ptr<ShaderProgram> ShaderManager::GetShader(const std::string& name)
     return nullptr;
 }
 
-void ShaderManager::RemoveShader(const std::string& name) {
+void ShaderManager::RemoveShader(const std::string &name) {
     m_shaders.erase(name);
 }
 

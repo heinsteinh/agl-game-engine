@@ -9,8 +9,8 @@ public:
 
         // Log every 5 seconds with timing information
         if (timer >= 5.0f) {
-            AGL_INFO("Game running for {:.2f}s | Current FPS: {:.1f} | Delta: {:.3f}ms",
-                    timer, GetFPS(), deltaTime * 1000.0f);
+            AGL_INFO("Game running for {:.2f}s | Current FPS: {:.1f} | Delta: {:.3f}ms", timer, GetFPS(),
+                     deltaTime * 1000.0f);
             timer = 0.0f;
         }
 

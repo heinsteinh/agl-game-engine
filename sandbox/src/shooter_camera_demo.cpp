@@ -1,25 +1,20 @@
-#include "agl.h"
 #include "Renderer.h"
-#include <iostream>
+#include "agl.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
+#include <iostream>
 
 // Example game class demonstrating the camera system for shooter games
 class ShooterCameraDemo : public agl::Game {
 public:
-    ShooterCameraDemo()
-        : m_rotation(0.0f)
-        , m_showInstructions(true)
-        , m_wireframeMode(false) {
-    }
+    ShooterCameraDemo() : m_rotation(0.0f), m_showInstructions(true), m_wireframeMode(false) {}
 
-    bool Initialize(int width = 1280, int height = 720, const char* title = "AGL Shooter Camera Demo") {
+    bool Initialize(int width = 1280, int height = 720, const char *title = "AGL Shooter Camera Demo") {
         if (!agl::Game::Initialize(width, height, title)) {
             AGL_ERROR("Failed to initialize base game class");
             return false;
         }
-
 
         AGL_INFO("Initializing AGL Shooter Camera Demo...");
 
@@ -28,11 +23,10 @@ public:
         AGL_INFO("Renderer initialized successfully");
 
         // Create camera and camera controller
-        m_camera = std::make_shared<agl::Camera>(
-            glm::vec3(0.0f, 2.0f, 5.0f),  // Position
-            glm::vec3(0.0f, 1.0f, 0.0f),  // Up vector
-            -90.0f,                        // Yaw
-            0.0f                          // Pitch
+        m_camera = std::make_shared<agl::Camera>(glm::vec3(0.0f, 2.0f, 5.0f), // Position
+                                                 glm::vec3(0.0f, 1.0f, 0.0f), // Up vector
+                                                 -90.0f,                      // Yaw
+                                                 0.0f                         // Pitch
         );
 
         // Set up perspective projection
@@ -45,18 +39,18 @@ public:
 
         // Configure camera settings for shooter gameplay
         agl::CameraSettings settings;
-        settings.movementSpeed = 8.0f;          // Fast movement for FPS
-        settings.sprintMultiplier = 2.0f;       // Double speed when sprinting
-        settings.crouchMultiplier = 0.4f;       // Slow when crouching
-        settings.mouseSensitivity = 0.15f;      // Good sensitivity for aiming
-        settings.defaultFOV = 75.0f;            // Standard FOV
-        settings.sprintFOV = 85.0f;             // Wider FOV when sprinting
-        settings.aimFOV = 50.0f;                // Narrow FOV when aiming
-        settings.fovTransitionSpeed = 8.0f;     // Fast FOV transitions
-        settings.movementSmoothing = 0.2f;      // Some smoothing for fluid movement
-        settings.rotationSmoothing = 0.1f;      // Light rotation smoothing
-        settings.shakeIntensity = 1.0f;         // Full shake intensity
-        settings.constrainPitch = true;         // Prevent camera flipping
+        settings.movementSpeed = 8.0f;      // Fast movement for FPS
+        settings.sprintMultiplier = 2.0f;   // Double speed when sprinting
+        settings.crouchMultiplier = 0.4f;   // Slow when crouching
+        settings.mouseSensitivity = 0.15f;  // Good sensitivity for aiming
+        settings.defaultFOV = 75.0f;        // Standard FOV
+        settings.sprintFOV = 85.0f;         // Wider FOV when sprinting
+        settings.aimFOV = 50.0f;            // Narrow FOV when aiming
+        settings.fovTransitionSpeed = 8.0f; // Fast FOV transitions
+        settings.movementSmoothing = 0.2f;  // Some smoothing for fluid movement
+        settings.rotationSmoothing = 0.1f;  // Light rotation smoothing
+        settings.shakeIntensity = 1.0f;     // Full shake intensity
+        settings.constrainPitch = true;     // Prevent camera flipping
 
         m_cameraController->SetSettings(settings);
 
@@ -71,16 +65,10 @@ public:
         // Create simple ground plane vertices
         float planeVertices[] = {
             // Ground plane (larger)
-            -20.0f, 0.0f, -20.0f,
-             20.0f, 0.0f, -20.0f,
-             20.0f, 0.0f,  20.0f,
-            -20.0f, 0.0f,  20.0f,
+            -20.0f, 0.0f, -20.0f, 20.0f, 0.0f, -20.0f, 20.0f, 0.0f, 20.0f, -20.0f, 0.0f, 20.0f,
         };
 
-        unsigned int planeIndices[] = {
-            0, 1, 2,
-            2, 3, 0
-        };
+        unsigned int planeIndices[] = {0, 1, 2, 2, 3, 0};
 
         // Create vertex buffer and index buffer for ground
         m_planeVB = std::make_shared<agl::VertexBuffer>(planeVertices, sizeof(planeVertices));
@@ -188,15 +176,16 @@ public:
             // Draw some cubes as reference objects
             for (int x = -10; x <= 10; x += 5) {
                 for (int z = -10; z <= 10; z += 5) {
-                    if (x == 0 && z == 0) continue; // Skip center
+                    if (x == 0 && z == 0)
+                        continue; // Skip center
 
                     glm::mat4 cubeModel = glm::translate(glm::mat4(1.0f), glm::vec3(x, 1.0f, z));
                     cubeModel = glm::rotate(cubeModel, glm::radians(m_rotation), glm::vec3(0.0f, 1.0f, 0.0f));
                     glm::mat4 cubeMVP = viewProj * cubeModel;
 
                     // Color based on distance from center
-                    float distance = sqrt(x*x + z*z);
-                    glm::vec4 color = glm::vec4(1.0f - distance/15.0f, 0.5f, distance/15.0f, 1.0f);
+                    float distance = sqrt(x * x + z * z);
+                    glm::vec4 color = glm::vec4(1.0f - distance / 15.0f, 0.5f, distance / 15.0f, 1.0f);
 
                     agl::Renderer::DrawCube(cubeMVP, color);
                 }
@@ -236,7 +225,7 @@ public:
 
         // Camera controller status
         if (m_cameraController) {
-            const char* modeNames[] = { "First Person", "Third Person", "Spectator", "Fixed" };
+            const char *modeNames[] = {"First Person", "Third Person", "Spectator", "Fixed"};
             int currentMode = static_cast<int>(m_cameraController->GetMode());
             ImGui::Text("Camera Mode: %s", modeNames[currentMode]);
 
@@ -250,7 +239,7 @@ public:
 
         // Settings controls
         if (m_cameraController) {
-            auto& settings = m_cameraController->GetSettings();
+            auto &settings = m_cameraController->GetSettings();
 
             if (ImGui::CollapsingHeader("Camera Settings")) {
                 ImGui::SliderFloat("Movement Speed", &settings.movementSpeed, 1.0f, 20.0f);
@@ -371,7 +360,6 @@ private:
     bool m_showInstructions;
     bool m_wireframeMode;
 };
-
 
 int main() {
 

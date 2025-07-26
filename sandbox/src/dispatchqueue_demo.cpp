@@ -1,8 +1,8 @@
 #include "agl.h"
-#include <iostream>
-#include <thread>
 #include <chrono>
+#include <iostream>
 #include <random>
+#include <thread>
 
 class DispatchQueueAdvancedDemo : public agl::Game {
 private:
@@ -22,7 +22,7 @@ private:
     bool m_showDemo = true;
 
 public:
-    bool Initialize(int width = 1024, int height = 768, const char* title = "Advanced DispatchQueue Demo") {
+    bool Initialize(int width = 1024, int height = 768, const char *title = "Advanced DispatchQueue Demo") {
         if (!agl::Game::Initialize(width, height, title)) {
             return false;
         }
@@ -44,9 +44,7 @@ public:
 private:
     void StartBackgroundProcessing() {
         // Start background thread for heavy processing
-        std::thread backgroundThread([this]() {
-            m_backgroundQueue->run();
-        });
+        std::thread backgroundThread([this]() { m_backgroundQueue->run(); });
         backgroundThread.detach();
 
         // Queue some initial background tasks
@@ -74,11 +72,8 @@ private:
             // Update results on main thread
             RunOnMainThread([this, taskId, result, duration]() {
                 std::lock_guard<std::mutex> lock(m_resultsMutex);
-                m_taskResults.push_back(
-                    "Task " + std::to_string(taskId) +
-                    " completed: " + std::to_string(result) +
-                    " (took " + std::to_string(duration.count()) + "ms)"
-                );
+                m_taskResults.push_back("Task " + std::to_string(taskId) + " completed: " + std::to_string(result) +
+                                        " (took " + std::to_string(duration.count()) + "ms)");
 
                 // Keep only last 10 results
                 if (m_taskResults.size() > 10) {
@@ -176,7 +171,7 @@ public:
             ImGui::BeginChild("Results", ImVec2(0, 200), true);
             {
                 std::lock_guard<std::mutex> lock(m_resultsMutex);
-                for (const auto& result : m_taskResults) {
+                for (const auto &result : m_taskResults) {
                     ImGui::TextWrapped("%s", result.c_str());
                 }
             }
@@ -212,8 +207,8 @@ public:
         frameTimeHistory[frameTimeOffset] = GetDeltaTime() * 1000.0f;
         frameTimeOffset = (frameTimeOffset + 1) % 100;
 
-        ImGui::PlotLines("Frame Time (ms)", frameTimeHistory, 100, frameTimeOffset,
-                        nullptr, 0.0f, 50.0f, ImVec2(0, 80));
+        ImGui::PlotLines("Frame Time (ms)", frameTimeHistory, 100, frameTimeOffset, nullptr, 0.0f, 50.0f,
+                         ImVec2(0, 80));
 
         ImGui::End();
     }
