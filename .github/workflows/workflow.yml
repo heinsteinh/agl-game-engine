@@ -5,7 +5,7 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main ]
-  #workflow_dispatch:
+  workflow_dispatch:
 
 env:
   BUILD_TYPE: Release
@@ -112,7 +112,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        demo: [renderer, texture, benchmark_deltatime, example_logger]
+        demo: [renderer, shooter_camera, advanced_renderer, texture, benchmark_deltatime, example_logger]
 
     steps:
     - name: Checkout code
@@ -179,6 +179,50 @@ jobs:
         path: sandbox/demo_build/bin/
         retention-days: 5
 
+  documentation-test:
+    name: Test Documentation Generation
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install documentation tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y doxygen graphviz
+
+    - name: Test documentation script
+      run: |
+        echo "Testing documentation generation script..."
+        chmod +x generate_docs.sh
+        
+        # Run the documentation generation
+        ./generate_docs.sh
+        
+        # Verify outputs
+        if [ -f "docs/doxygen/html/index.html" ]; then
+          echo "✅ HTML documentation generated successfully"
+        else
+          echo "❌ HTML documentation generation failed"
+          exit 1
+        fi
+        
+        if [ -f "docs/CAMERA_DOCUMENTATION.md" ]; then
+          echo "✅ Markdown documentation exists"
+          wc -l docs/CAMERA_DOCUMENTATION.md
+        else
+          echo "❌ Markdown documentation missing"
+          exit 1
+        fi
+
+    - name: Upload test documentation
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-documentation
+        path: docs/doxygen/html/
+        retention-days: 3
+
   code-quality:
     name: Code Quality & Security
     runs-on: ubuntu-latest
@@ -233,12 +277,30 @@ jobs:
         find gamelib -name "*.cpp" | wc -l | xargs echo "  CPP files:"
         find gamelib -name "*.h" -o -name "*.hpp" | wc -l | xargs echo "  Header files:"
 
+        echo "Core camera system:"
+        ls -la gamelib/include/Camera.h gamelib/include/CameraController.h gamelib/src/Camera.cpp gamelib/src/CameraController.cpp 2>/dev/null | wc -l | xargs echo "  Camera files found:"
+
         echo "Sandbox demos:"
         find sandbox -name "*demo*.cpp" | wc -l | xargs echo "  Demo files:"
         ls sandbox/src/*demo*.cpp 2>/dev/null | sed 's/.*\///;s/_demo.cpp//;s/\.cpp//' | sed 's/^/  - /' || echo "  No demo files found"
 
         echo "Documentation:"
         find . -name "*.md" | wc -l | xargs echo "  Markdown files:"
+        if [ -f "docs/CAMERA_DOCUMENTATION.md" ]; then
+          echo "  ✅ Camera documentation found"
+        else
+          echo "  ❌ Camera documentation missing"
+        fi
+        if [ -f "Doxyfile" ]; then
+          echo "  ✅ Doxygen configuration found"
+        else
+          echo "  ❌ Doxygen configuration missing"
+        fi
+        if [ -f "generate_docs.sh" ]; then
+          echo "  ✅ Documentation script found"
+        else
+          echo "  ❌ Documentation script missing"
+        fi
 
     - name: Upload static analysis results
       uses: actions/upload-artifact@v4
@@ -329,44 +391,26 @@ jobs:
 
     - name: Generate Doxygen documentation
       run: |
-        cat > Doxyfile << 'EOF'
-        PROJECT_NAME = "AGL Game Engine"
-        PROJECT_NUMBER = "v1.0.0"
-        PROJECT_BRIEF = "Modern C++ Game Engine with OpenGL"
-
-        INPUT = gamelib/include/ gamelib/src/ sandbox/src/ README.md
-        OUTPUT_DIRECTORY = docs/generated
-
-        GENERATE_HTML = YES
-        GENERATE_LATEX = NO
-        HTML_OUTPUT = .
-
-        RECURSIVE = YES
-        EXTRACT_ALL = YES
-        EXTRACT_PRIVATE = NO
-        EXTRACT_STATIC = YES
-
-        USE_MDFILE_AS_MAINPAGE = README.md
-        MARKDOWN_SUPPORT = YES
-
-        HAVE_DOT = YES
-        CLASS_DIAGRAMS = YES
-        CLASS_GRAPH = YES
-        COLLABORATION_GRAPH = YES
-
-        SEARCHENGINE = YES
-        GENERATE_TREEVIEW = YES
-
-        FILE_PATTERNS = *.h *.hpp *.cpp *.md
-        EXCLUDE_PATTERNS = */build/* */.*
-
-        WARNINGS = YES
-        WARN_IF_UNDOCUMENTED = NO
-        QUIET = YES
-        EOF
-
-        mkdir -p docs/generated
+        # Use the project's Doxyfile for comprehensive camera documentation
+        echo "Generating documentation using project Doxyfile..."
+        
+        # Verify Doxyfile exists
+        if [ ! -f "Doxyfile" ]; then
+          echo "❌ Doxyfile not found"
+          exit 1
+        fi
+        
+        # Generate documentation
         doxygen Doxyfile
+        
+        # Verify documentation was generated
+        if [ -f "docs/doxygen/html/index.html" ]; then
+          echo "✅ Documentation generated successfully"
+          ls -la docs/doxygen/html/
+        else
+          echo "❌ Documentation generation failed"
+          exit 1
+        fi
 
     - name: Setup Pages
       uses: actions/configure-pages@v4
@@ -374,7 +418,7 @@ jobs:
     - name: Upload pages artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: docs/generated
+        path: docs/doxygen/html
 
     - name: Deploy to GitHub Pages
       id: deployment
@@ -383,7 +427,7 @@ jobs:
   release:
     name: Create Release
     runs-on: ubuntu-latest
-    needs: [build-gamelib, sandbox-demos, integration-tests]
+    needs: [build-gamelib, sandbox-demos, documentation-test, integration-tests]
     if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
@@ -416,20 +460,42 @@ jobs:
         # AGL Game Engine Release
 
         ## Features
-        - Modern C++17 game engine
-        - OpenGL rendering system
-        - ImGui integration
+        - Modern C++17 game engine with comprehensive 3D camera system
+        - OpenGL 3.3+ rendering with advanced abstractions
+        - Professional camera system for shooter and adventure games
+        - ImGui integration for real-time debugging
         - Cross-platform support (Linux, macOS)
-        - Comprehensive logging system
-        - Multiple demo applications
+        - Comprehensive logging system with spdlog
+        - Multiple demo applications showcasing engine features
+
+        ## New Camera System
+        - First-person, third-person, spectator, and fixed camera modes
+        - Shooter game mechanics: sprint, crouch, aim, camera shake
+        - Dynamic FOV transitions and smooth interpolation
+        - Screen-to-world ray casting for mouse picking
+        - View frustum culling for performance optimization
+        - Comprehensive Doxygen documentation
+
+        ## Demo Applications
+        - Shooter Camera Demo: Advanced FPS-style camera controls
+        - Advanced Renderer Demo: Comparison of camera systems
+        - Texture Demo: Texture loading and management
+        - Benchmark Demo: Performance analysis tools
 
         ## Build Artifacts
         - Pre-built binaries for Linux and macOS
         - Static libraries for integration
+        - Complete API documentation (Doxygen + Markdown)
         - Demo applications showcase
+
+        ## Documentation
+        - Comprehensive camera system guide (docs/CAMERA_DOCUMENTATION.md)
+        - Auto-generated API documentation available online
+        - Usage examples and troubleshooting guides
 
         ## Getting Started
         See README.md for build instructions and usage examples.
+        Visit the documentation for detailed camera system integration.
         EOF
 
     - name: Create GitHub Release

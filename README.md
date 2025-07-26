@@ -370,6 +370,65 @@ input->GetMouseDelta(deltaX, deltaY);
 // Use for FPS camera or mouse look
 ```
 
+## 📚 Documentation
+
+The AGL Game Engine provides comprehensive documentation for all systems, with particular focus on the advanced camera system.
+
+### 📖 Documentation Types
+
+#### 📄 Markdown Documentation
+- **[Camera System Guide](docs/CAMERA_DOCUMENTATION.md)** - Complete camera documentation
+  - Quick start guide with code examples
+  - Detailed API reference for Camera and CameraController classes
+  - Camera modes explanation (first-person, third-person, spectator, fixed)
+  - Shooter game features (sprint, crouch, aim, camera shake)
+  - Configuration guide for different game types
+  - Advanced features (screen-to-world ray casting, view frustum culling)
+  - Best practices and performance optimization
+  - Troubleshooting guide with common issues and solutions
+
+#### 🌐 Doxygen API Documentation
+Generate comprehensive HTML documentation with full API reference:
+
+```bash
+# Generate Doxygen documentation
+./generate_docs.sh
+
+# View the generated documentation
+open docs/doxygen/html/index.html  # macOS
+xdg-open docs/doxygen/html/index.html  # Linux
+```
+
+The Doxygen documentation includes:
+- **Complete API Reference**: Every class, method, and parameter documented
+- **Code Examples**: Practical usage examples for all features
+- **Class Diagrams**: Visual representation of class relationships
+- **Cross-References**: Clickable links between related functions and classes
+- **Search Functionality**: Quick navigation through the entire codebase
+
+### 🎯 Key Documentation Features
+
+- **📋 Complete API Coverage**: Every public method and class is documented
+- **💡 Usage Examples**: Practical code snippets for common tasks
+- **🔧 Configuration Guides**: Settings for different game types (FPS, adventure, etc.)
+- **🐛 Troubleshooting**: Solutions for common issues and debugging tips
+- **⚡ Performance Notes**: Optimization recommendations and best practices
+- **🎮 Game-Specific Features**: Detailed shooter game mechanics documentation
+
+### 📝 Documentation Prerequisites
+
+To generate Doxygen documentation:
+- **Doxygen**: Install via `brew install doxygen` (macOS) or `apt install doxygen` (Linux)
+- **GraphViz** (optional): For class diagrams - `brew install graphviz` or `apt install graphviz`
+
+### 🔗 External Resources
+
+- **[GitHub Pages Documentation](https://heinsteinh.github.io/agl-game-engine/)** - Auto-generated API docs
+- **[OpenGL Reference](https://www.opengl.org/sdk/docs/)** - OpenGL API documentation
+- **[GLFW Documentation](https://www.glfw.org/docs/latest/)** - Window and input handling
+- **[GLM Documentation](https://glm.g-truc.net/0.9.9/index.html)** - Mathematics library
+- **[ImGui Documentation](https://github.com/ocornut/imgui/wiki)** - GUI system
+
 ## 🎮 Demo Applications
 
 The sandbox contains several demo applications showcasing different engine features:
