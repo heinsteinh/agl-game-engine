@@ -1,0 +1,11 @@
+---
+BasedOnStyle: LLVM
+AccessModifierOffset: -4
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakTemplateDeclarations: Yes
+ColumnLimit: 120
+IndentWidth: 4
