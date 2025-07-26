@@ -64,7 +64,7 @@ namespace agl {
         Signal<MouseButton, KeyState> OnMouseButtonEvent; ///< Triggered when a mouse button state changes
         Signal<double, double> OnMouseMoveEvent;        ///< Triggered when mouse moves
         Signal<double, double> OnScrollEvent;           ///< Triggered when scroll wheel moves
-        
+
         // Convenience signals for specific key events
         Signal<int> OnKeyPressed;                       ///< Triggered when a key is pressed
         Signal<int> OnKeyReleased;                      ///< Triggered when a key is released

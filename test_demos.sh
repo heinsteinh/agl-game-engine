@@ -13,7 +13,7 @@ echo "=============================================="
 # Array of demos to test
 demos=(
     "signalslot"
-    "dispatchqueue" 
+    "dispatchqueue"
     "renderer"
     "shooter_camera"
     "advanced_renderer"
@@ -25,20 +25,20 @@ demos=(
 # Build and test each demo
 for demo in "${demos[@]}"; do
     echo -e "\n${YELLOW}Building ${demo} demo...${NC}"
-    
+
     # Create clean build directory
     build_dir="sandbox/build_${demo}"
     rm -rf "$build_dir"
-    
+
     # Configure demo
     cd sandbox
     if cmake -B "build_${demo}" -DDEMO_NAME="${demo}" -DCMAKE_BUILD_TYPE=Release > /dev/null 2>&1; then
         echo -e "${GREEN}✅ ${demo} configured successfully${NC}"
-        
+
         # Build demo
         if cmake --build "build_${demo}" --parallel > /dev/null 2>&1; then
             echo -e "${GREEN}✅ ${demo} built successfully${NC}"
-            
+
             # Check if executable exists
             exe_name="agl_${demo}_demo"
             if [ -f "build_${demo}/${exe_name}" ]; then
@@ -52,7 +52,7 @@ for demo in "${demos[@]}"; do
     else
         echo -e "${RED}❌ ${demo} configuration failed${NC}"
     fi
-    
+
     cd ..
 done
 

@@ -6,14 +6,14 @@ class SignalSlotDemoGame : public agl::Game {
 private:
     std::shared_ptr<agl::Camera> m_camera;
     std::unique_ptr<agl::CameraController> m_controller;
-    
+
     // Slots for handling input events
     std::unique_ptr<agl::Slot<int>> m_escapeKeySlot;
     std::unique_ptr<agl::Slot<agl::MouseButton>> m_mouseClickSlot;
     std::unique_ptr<agl::Slot<double, double>> m_mouseMoveSlot;
     std::unique_ptr<agl::Slot<double, double>> m_scrollSlot;
     std::unique_ptr<agl::Slot<int, int>> m_windowResizeSlot;
-    
+
     // Stats
     int m_keyPressCount = 0;
     int m_mouseClickCount = 0;
@@ -69,7 +69,7 @@ private:
                 case agl::MouseButton::Right: buttonName = "Right"; break;
                 case agl::MouseButton::Middle: buttonName = "Middle"; break;
             }
-            
+
             AGL_INFO("Mouse button clicked: {}", buttonName);
             m_mouseClickCount++;
         });
@@ -79,7 +79,7 @@ private:
         m_mouseMoveSlot = std::make_unique<agl::Slot<double, double>>([this](double x, double y) {
             static int moveCounter = 0;
             moveCounter++;
-            
+
             // Only log every 60th movement to avoid spam
             if (moveCounter % 60 == 0) {
                 AGL_TRACE("Mouse moved to ({:.1f}, {:.1f})", x, y);
@@ -105,7 +105,7 @@ private:
             if (m_camera) {
                 m_camera->SetPerspective(45.0f, (float)width / height, 0.1f, 100.0f);
             }
-            
+
             // Use DispatchQueue to defer UI updates
             RunOnMainThread([width, height]() {
                 // Update any UI elements that depend on window size
@@ -209,11 +209,11 @@ public:
 
 int main() {
     SignalSlotDemoGame game;
-    
+
     if (game.Initialize(1024, 768, "AGL Engine - Signal/Slot & DispatchQueue Demo")) {
         game.Run();
     }
-    
+
     game.Shutdown();
     return 0;
 }

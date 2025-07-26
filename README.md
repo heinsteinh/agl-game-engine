@@ -146,7 +146,7 @@ cmake -B build_signalslot -DDEMO_NAME=signalslot
 cmake --build build_signalslot
 ./build_signalslot/agl_signalslot_demo
 
-# Build DispatchQueue demo  
+# Build DispatchQueue demo
 cmake -B build_dispatchqueue -DDEMO_NAME=dispatchqueue
 cmake --build build_dispatchqueue
 ./build_dispatchqueue/agl_dispatchqueue_demo
@@ -157,7 +157,7 @@ cmake --build build_renderer
 ./build_renderer/agl_renderer_demo
 
 # Build other demos (replace DEMO_NAME as needed)
-# Available: signalslot, dispatchqueue, renderer, shooter_camera, 
+# Available: signalslot, dispatchqueue, renderer, shooter_camera,
 #           advanced_renderer, texture, example_logger, benchmark_deltatime
 cmake -B build_demo -DDEMO_NAME=<demo_name>
 cmake --build build_demo
@@ -470,7 +470,7 @@ private:
         agl::DispatchQueue::global().async([this]() {
             // Simulate heavy loading work
             std::this_thread::sleep_for(std::chrono::seconds(2));
-            
+
             // Schedule UI update back on main thread
             RunOnMainThread([this]() {
                 AGL_INFO("Resources loaded! Updating UI...");
@@ -484,7 +484,7 @@ private:
         agl::DispatchQueue::global().async([this]() {
             // Process data in background
             std::string result = "Processed data: " + std::to_string(rand());
-            
+
             // Use synchronous main thread execution for immediate result
             RunOnMainThreadSync([this, result]() {
                 AGL_INFO("Background result: {}", result);

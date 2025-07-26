@@ -146,7 +146,7 @@ void Input::GLFWKeyCallback(GLFWwindow* window, int key, int scancode, int actio
 
         // Trigger signal events
         input->OnKeyEvent.broadcast(key, state);
-        
+
         if (state == KeyState::Pressed) {
             input->OnKeyPressed.broadcast(key);
         } else if (state == KeyState::Released) {
@@ -165,12 +165,12 @@ void Input::GLFWMouseButtonCallback(GLFWwindow* window, int button, int action, 
     if (input) {
         KeyState state = static_cast<KeyState>(action);
         input->m_mouseButtonStates[button] = state;
-        
+
         MouseButton mouseButton = static_cast<MouseButton>(button);
-        
+
         // Trigger signal events
         input->OnMouseButtonEvent.broadcast(mouseButton, state);
-        
+
         if (state == KeyState::Pressed) {
             input->OnMouseButtonPressed.broadcast(mouseButton);
         } else if (state == KeyState::Released) {

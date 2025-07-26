@@ -27,7 +27,7 @@ namespace agl {
         void RunOnMainThread(F&& func) {
             DispatchQueue::main().async(std::forward<F>(func));
         }
-        
+
         template<typename F>
         void RunOnMainThreadSync(F&& func) {
             DispatchQueue::main().sync(std::forward<F>(func));
