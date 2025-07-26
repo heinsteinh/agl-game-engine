@@ -45,7 +45,7 @@ bool Game::Initialize(int width, int height, const char* title) {
         AGL_CORE_ERROR("Failed to create window");
         return false;
     }
-    
+
 
     // Initialize input
     m_input = std::make_unique<Input>();

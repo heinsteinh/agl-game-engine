@@ -13,7 +13,7 @@ public:
         , m_wireframeMode(false)
         , m_animationPaused(false)
         , m_useNewCameraSystem(true)
-        
+
         // Old camera system variables (for comparison)
         , m_cameraDistance(5.0f)
         , m_cameraYaw(0.0f)
@@ -60,7 +60,7 @@ public:
         settings.aimFOV = 55.0f;
         settings.movementSmoothing = 0.15f;
         settings.rotationSmoothing = 0.08f;
-        
+
         m_cameraController->SetSettings(settings);
 
         // Create a simple shader program
@@ -87,7 +87,7 @@ public:
         AGL_INFO("Advanced Renderer Demo initialized successfully!");
         AGL_INFO("Press C to toggle between old/new camera systems");
         AGL_INFO("Current system: NEW Camera System (recommended)");
-        
+
         return true;
     }
 
@@ -187,7 +187,7 @@ public:
         // Camera system toggle
         const char* systemName = m_useNewCameraSystem ? "NEW Camera System" : "OLD Manual System";
         ImGui::Text("Current Camera: %s", systemName);
-        
+
         if (ImGui::Button("Toggle Camera System (C)")) {
             m_useNewCameraSystem = !m_useNewCameraSystem;
         }
@@ -204,11 +204,11 @@ public:
 
         if (m_useNewCameraSystem && m_cameraController) {
             ImGui::Text("FOV: %.1f°", m_cameraController->GetCurrentFOV());
-            
+
             const char* modeNames[] = { "First Person", "Third Person", "Spectator", "Fixed" };
             int currentMode = static_cast<int>(m_cameraController->GetMode());
             ImGui::Text("Camera Mode: %s", modeNames[currentMode]);
-            
+
             ImGui::Text("States:");
             ImGui::BulletText("Aiming: %s", m_cameraController->IsAiming() ? "YES" : "NO");
             ImGui::BulletText("Sprinting: %s", m_cameraController->IsSprinting() ? "YES" : "NO");
@@ -229,7 +229,7 @@ public:
                 agl::Renderer::DisableWireframe();
             }
         }
-        
+
         ImGui::Checkbox("Pause Animation", &m_animationPaused);
 
         if (ImGui::Button("Reset Camera")) {
@@ -270,7 +270,7 @@ public:
 
     void Shutdown() {
         AGL_INFO("Shutting down Advanced Renderer Demo...");
-        
+
         if (m_shader) m_shader.reset();
         if (m_triangleVA) m_triangleVA.reset();
         if (m_triangleVB) m_triangleVB.reset();
@@ -279,7 +279,7 @@ public:
 
         agl::Renderer::Shutdown();
         agl::Game::Shutdown();
-        
+
         AGL_INFO("Advanced Renderer Demo shutdown complete");
     }
 
@@ -429,7 +429,7 @@ private:
     }
 };
 
-int main_advanced_renderer() {
+int main() {
     AdvancedRendererDemo demo;
 
     if (demo.Initialize(1280, 720, "AGL Advanced Renderer Demo - Old vs New Camera")) {

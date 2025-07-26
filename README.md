@@ -104,7 +104,7 @@ cmake --build build --parallel
 
 The sandbox executable contains multiple demos, each with different main functions:
 - `main()` - Enhanced renderer demo with camera controls
-- `main_shooter_camera()` - Advanced camera system for shooters  
+- `main_shooter_camera()` - Advanced camera system for shooters
 - `main_advanced_renderer()` - Comparison between old and new camera systems
 - `main_Texture()` - Texture loading and management demo
 - `main_logger()` - Logging system demonstration
@@ -167,7 +167,7 @@ public:
         // Update game logic with frame-rate independent timing
         static float timer = 0.0f;
         timer += deltaTime;
-        
+
         // Log performance every 5 seconds
         if (timer >= 5.0f) {
             AGL_INFO("Game running for {:.2f}s | FPS: {:.1f} | Delta: {:.3f}ms",
@@ -179,7 +179,7 @@ public:
         if (GetInput()->IsKeyPressed(GLFW_KEY_SPACE)) {
             AGL_INFO("Space key pressed!");
         }
-        
+
         if (GetInput()->IsKeyHeld(GLFW_KEY_W)) {
             // Move forward logic
         }
@@ -189,40 +189,40 @@ public:
         // Custom OpenGL rendering
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
+
         // Your rendering code here
     }
 
     void OnImGuiRender() override {
         // Real-time debugging interface
         ImGui::Begin("Game Debug");
-        
+
         ImGui::Text("Performance:");
         ImGui::Text("FPS: %.1f", GetFPS());
         ImGui::Text("Delta Time: %.3f ms", GetDeltaTime() * 1000.0f);
         ImGui::Text("Average Delta: %.3f ms", GetAverageDeltaTime() * 1000.0f);
-        
+
         ImGui::Separator();
-        
+
         if (ImGui::Button("Log Info")) {
             AGL_INFO("User clicked debug button!");
         }
-        
+
         if (ImGui::Button("Log Warning")) {
             AGL_WARN("This is a warning message");
         }
-        
+
         ImGui::End();
     }
 };
 
 int main() {
     MyGame game;
-    
+
     if (game.Initialize(1280, 720, "Custom AGL Game")) {
         game.Run();
     }
-    
+
     return 0;
 }
 ```
@@ -263,7 +263,7 @@ public:
         settings.defaultFOV = 75.0f;            // Standard FOV
         settings.aimFOV = 50.0f;                // Zoom when aiming
         settings.sprintFOV = 85.0f;             // Wider when sprinting
-        
+
         m_cameraController->SetSettings(settings);
         return true;
     }
@@ -290,7 +290,7 @@ public:
     void OnRender() override {
         // Use camera for rendering
         glm::mat4 viewProj = m_camera->GetViewProjectionMatrix();
-        
+
         // Render your scene with the camera
         // ...
     }
@@ -316,14 +316,14 @@ int main() {
     AGL_CORE_INFO("Engine starting up...");
     AGL_CORE_WARN("This is a core warning");
     AGL_CORE_ERROR("Core error message");
-    
+
     // Application logging (for your game code)
     AGL_INFO("Application message");
     AGL_WARN("Application warning");
     AGL_ERROR("Application error: {}", "Something went wrong");
-    
+
     // Logs are automatically written to both console and file (agl-engine.log)
-    
+
     return 0;
 }
 ```
@@ -401,7 +401,7 @@ The sandbox contains several demo applications showcasing different engine featu
 - **Demonstrates**: Basic OpenGL rendering, 3D transformations, enhanced camera controls
 - **Features**: Triangle, quad, and cube rendering with improved camera system
 - **Controls**: Mouse look, WASD movement, wireframe toggle, animation controls
-- **Key Bindings**: 
+- **Key Bindings**:
   - `TAB` - Toggle wireframe mode
   - `SPACE` - Pause/resume animation
   - `W/A/S/D` - Camera movement
@@ -433,7 +433,7 @@ The sandbox contains several demo applications showcasing different engine featu
 ### Core Namespace: `agl`
 All engine classes are in the `agl` namespace:
 - `agl::Game` - Main game loop with delta time management
-- `agl::Window` - Cross-platform window management  
+- `agl::Window` - Cross-platform window management
 - `agl::Input` - Unified input handling system
 - `agl::Camera` - 3D camera with perspective/orthographic projection
 - `agl::CameraController` - Advanced camera control with shooter game features
@@ -568,7 +568,7 @@ This project is released under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ### Third-Party Licenses
 - **GLFW**: zlib/libpng license
-- **GLM**: MIT license  
+- **GLM**: MIT license
 - **STB**: Public domain
 - **Dear ImGui**: MIT license
 - **spdlog**: MIT license

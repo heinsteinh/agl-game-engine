@@ -69,7 +69,7 @@ public:
         if (!m_animationPaused) {
             m_rotation += deltaTime * 45.0f; // 45 degrees per second
         }
-        
+
         // Log performance periodically
         static float perfTimer = 0.0f;
         perfTimer += deltaTime;
@@ -165,7 +165,7 @@ public:
         ImGui::Text("Average Delta: %.3f ms", GetAverageDeltaTime() * 1000.0f);
 
         ImGui::Separator();
-        
+
         // Render statistics
         ImGui::Text("Render Statistics:");
         ImGui::Text("Draw Calls: %u", agl::Renderer::GetDrawCallCount());
@@ -177,7 +177,7 @@ public:
         }
 
         ImGui::Separator();
-        
+
         // Render controls
         ImGui::Text("Render Controls:");
         if (ImGui::Checkbox("Wireframe Mode", &m_wireframeMode)) {
@@ -187,7 +187,7 @@ public:
                 agl::Renderer::DisableWireframe();
             }
         }
-        
+
         if (ImGui::Checkbox("Pause Animation", &m_animationPaused)) {
             if (m_animationPaused) {
                 AGL_INFO("Animation paused");
@@ -197,23 +197,23 @@ public:
         }
 
         ImGui::Separator();
-        
+
         // Camera controls
         ImGui::Text("Camera Controls:");
         ImGui::SliderFloat("Distance", &m_cameraDistance, 1.0f, 20.0f);
         ImGui::SliderFloat("Yaw", &m_cameraYaw, -180.0f, 180.0f);
         ImGui::SliderFloat("Pitch", &m_cameraPitch, -89.0f, 89.0f);
-        
+
         if (ImGui::Button("Reset Camera")) {
             m_cameraDistance = 5.0f;
             m_cameraYaw = 0.0f;
             m_cameraPitch = 0.0f;
         }
-        
+
         ImGui::Text("Mouse Look: %s", m_mouseLookEnabled ? "ON" : "OFF");
 
         ImGui::Separator();
-        
+
         // Controls help
         ImGui::Text("Keyboard Controls:");
         ImGui::BulletText("TAB - Toggle wireframe mode");
@@ -222,14 +222,14 @@ public:
         ImGui::BulletText("A/D - Rotate camera left/right");
         ImGui::BulletText("Q/E - Look up/down");
         ImGui::BulletText("R - Reset camera");
-        
+
         ImGui::Text("Mouse Controls:");
         ImGui::BulletText("Right Click - Toggle mouse look");
         ImGui::BulletText("Mouse Wheel - Zoom in/out");
         ImGui::BulletText("Mouse Move - Camera look (when enabled)");
 
         ImGui::Separator();
-        
+
         // Scene objects
         ImGui::Text("Scene Objects:");
         ImGui::BulletText("Orange Triangle - Custom vertex buffer");
@@ -250,18 +250,18 @@ public:
 
     void Shutdown() {
         AGL_INFO("Shutting down AGL Renderer Demo...");
-        
+
         // Clean up renderer resources
         if (m_shader) {
             AGL_INFO("Cleaning up shader resources");
             m_shader.reset();
         }
-        
+
         if (m_triangleVA) {
             AGL_INFO("Cleaning up vertex array");
             m_triangleVA.reset();
         }
-        
+
         if (m_triangleVB) {
             AGL_INFO("Cleaning up vertex buffer");
             m_triangleVB.reset();
@@ -273,7 +273,7 @@ public:
 
         // Call parent shutdown
         agl::Game::Shutdown();
-        
+
         AGL_INFO("Renderer Demo shutdown complete");
     }
 
@@ -401,7 +401,7 @@ private:
     }
 };
 
-int main() {
+int main_renderer() {
     RendererDemo demo;
 
     if (demo.Initialize(1280, 720, "AGL Renderer Demo - Modern OpenGL Showcase")) {

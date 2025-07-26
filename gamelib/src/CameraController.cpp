@@ -76,7 +76,7 @@ namespace agl {
         // Update camera effects
         UpdateFOV(deltaTime);
         UpdateShake(deltaTime);
-        
+
         if (m_smoothingEnabled) {
             ApplySmoothing(deltaTime);
         }
@@ -95,7 +95,7 @@ namespace agl {
         if (m_mode != mode) {
             m_mode = mode;
             AGL_CORE_INFO("Camera mode changed to: {}", static_cast<int>(mode));
-            
+
             // Reset smooth values when changing modes
             m_velocitySmooth = glm::vec3(0.0f);
             m_rotationSmooth = glm::vec2(0.0f);
@@ -211,7 +211,7 @@ namespace agl {
 
         // Movement processing
         glm::vec3 movement(0.0f);
-        
+
         if (m_input->IsKeyHeld(GetMoveForwardKey())) {
             movement += m_camera->GetFront();
         }
@@ -231,14 +231,14 @@ namespace agl {
         // Normalize movement to prevent faster diagonal movement
         if (glm::length(movement) > 0.0f) {
             movement = glm::normalize(movement);
-            
+
             // Apply speed modifiers
             float speed = m_settings.movementSpeed;
             if (m_isSprinting) speed *= m_settings.sprintMultiplier;
             if (m_isCrouching) speed *= m_settings.crouchMultiplier;
-            
+
             movement *= speed * deltaTime;
-            
+
             if (m_smoothingEnabled) {
                 // Apply movement smoothing
                 m_velocitySmooth = glm::mix(m_velocitySmooth, movement, m_settings.movementSmoothing);
@@ -277,7 +277,7 @@ namespace agl {
         if (m_camera) {
             m_camera->Reset();
         }
-        
+
         m_isAiming = false;
         m_isSprinting = false;
         m_isCrouching = false;
@@ -287,7 +287,7 @@ namespace agl {
         m_currentFOV = m_settings.defaultFOV;
         ClearShake();
         m_firstMouse = true;
-        
+
         AGL_CORE_INFO("Camera controller reset");
     }
 
@@ -298,10 +298,10 @@ namespace agl {
 
     void CameraController::UpdateThirdPerson(float deltaTime) {
         if (!m_camera) return;
-        
+
         // Calculate ideal third person position
         glm::vec3 idealPosition = CalculateThirdPersonPosition();
-        
+
         // Smoothly move camera to ideal position
         if (m_smoothingEnabled) {
             glm::vec3 currentPos = m_camera->GetPosition();
@@ -310,7 +310,7 @@ namespace agl {
         } else {
             m_camera->SetPosition(idealPosition);
         }
-        
+
         // Always look at target in third person
         m_camera->LookAt(m_target);
     }
@@ -330,7 +330,7 @@ namespace agl {
 
     void CameraController::UpdateFOV(float deltaTime) {
         if (!m_camera) return;
-        
+
         // Smoothly interpolate FOV
         if (std::abs(m_currentFOV - m_targetFOV) > 0.1f) {
             m_currentFOV = glm::mix(m_currentFOV, m_targetFOV, m_settings.fovTransitionSpeed * deltaTime);
@@ -341,23 +341,23 @@ namespace agl {
     void CameraController::UpdateShake(float deltaTime) {
         if (m_shakeTimer > 0.0f) {
             m_shakeTimer -= deltaTime;
-            
+
             // Generate random shake offset
             static std::random_device rd;
             static std::mt19937 gen(rd());
             static std::uniform_real_distribution<float> dis(-1.0f, 1.0f);
-            
+
             float intensity = m_shakeIntensity * (m_shakeTimer / m_shakeDuration);
             m_shakeOffset.x = dis(gen) * intensity;
             m_shakeOffset.y = dis(gen) * intensity;
             m_shakeOffset.z = dis(gen) * intensity * 0.5f; // Less Z shake
-            
+
             // Apply shake to camera position
             if (m_camera) {
                 glm::vec3 basePos = m_camera->GetPosition();
                 m_camera->SetPosition(basePos + m_shakeOffset);
             }
-            
+
             // Dampen shake over time
             m_shakeIntensity = std::max(0.0f, m_shakeIntensity - m_settings.shakeDamping * deltaTime);
         } else {
@@ -385,32 +385,32 @@ namespace agl {
 
     void CameraController::HandleMouseLook(float deltaTime) {
         if (!m_input || !m_camera) return;
-        
+
         double mouseX, mouseY;
         m_input->GetMousePosition(mouseX, mouseY);
-        
+
         if (m_firstMouse) {
             m_lastMouseX = static_cast<float>(mouseX);
             m_lastMouseY = static_cast<float>(mouseY);
             m_firstMouse = false;
             return;
         }
-        
+
         float xoffset = static_cast<float>(mouseX) - m_lastMouseX;
         float yoffset = m_lastMouseY - static_cast<float>(mouseY); // Reversed since y-coordinates go from bottom to top
-        
+
         m_lastMouseX = static_cast<float>(mouseX);
         m_lastMouseY = static_cast<float>(mouseY);
-        
+
         // Apply sensitivity
         xoffset *= m_settings.mouseSensitivity;
         yoffset *= m_settings.mouseSensitivity;
-        
+
         // Invert Y if enabled
         if (m_settings.invertY) {
             yoffset = -yoffset;
         }
-        
+
         if (m_smoothingEnabled) {
             // Apply rotation smoothing
             glm::vec2 targetRotation(xoffset, yoffset);

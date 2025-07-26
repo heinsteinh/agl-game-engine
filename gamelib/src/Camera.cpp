@@ -56,7 +56,7 @@ namespace agl {
     // Processes input received from any keyboard-like input system
     void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime) {
         float velocity = MovementSpeed * deltaTime;
-        
+
         switch (direction) {
             case CameraMovement::Forward:
                 Position += Front * velocity;
@@ -123,14 +123,14 @@ namespace agl {
     // Make camera look at a specific target
     void Camera::LookAt(const glm::vec3& target) {
         glm::vec3 direction = glm::normalize(target - Position);
-        
+
         // Calculate yaw and pitch from direction vector
         Yaw = glm::degrees(atan2(direction.z, direction.x));
         Pitch = glm::degrees(asin(-direction.y));
-        
+
         // Constrain pitch
         Pitch = std::clamp(Pitch, -89.0f, 89.0f);
-        
+
         UpdateCameraVectors();
         AGL_CORE_TRACE("Camera looking at target ({:.2f}, {:.2f}, {:.2f})", target.x, target.y, target.z);
     }
@@ -142,7 +142,7 @@ namespace agl {
         AspectRatio = aspectRatio;
         NearPlane = nearPlane;
         FarPlane = farPlane;
-        AGL_CORE_TRACE("Camera set to perspective: FOV={:.1f}, Aspect={:.2f}, Near={:.2f}, Far={:.1f}", 
+        AGL_CORE_TRACE("Camera set to perspective: FOV={:.1f}, Aspect={:.2f}, Near={:.2f}, Far={:.1f}",
                       fov, aspectRatio, nearPlane, farPlane);
     }
 
@@ -155,7 +155,7 @@ namespace agl {
         OrthoTop = top;
         NearPlane = nearPlane;
         FarPlane = farPlane;
-        AGL_CORE_TRACE("Camera set to orthographic: L={:.1f}, R={:.1f}, B={:.1f}, T={:.1f}", 
+        AGL_CORE_TRACE("Camera set to orthographic: L={:.1f}, R={:.1f}, B={:.1f}, T={:.1f}",
                       left, right, bottom, top);
     }
 
@@ -184,19 +184,19 @@ namespace agl {
         // Normalize screen coordinates to [-1, 1]
         float x = (2.0f * screenX) / screenWidth - 1.0f;
         float y = 1.0f - (2.0f * screenY) / screenHeight;
-        
+
         // Create ray in clip space
         glm::vec4 rayClip = glm::vec4(x, y, -1.0f, 1.0f);
-        
+
         // Transform to eye space
         glm::mat4 projInverse = glm::inverse(GetProjectionMatrix());
         glm::vec4 rayEye = projInverse * rayClip;
         rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
-        
+
         // Transform to world space
         glm::mat4 viewInverse = glm::inverse(GetViewMatrix());
         glm::vec4 rayWorld = viewInverse * rayEye;
-        
+
         return glm::normalize(glm::vec3(rayWorld));
     }
 
@@ -204,13 +204,13 @@ namespace agl {
     bool Camera::IsInView(const glm::vec3& point, float radius) const {
         glm::mat4 viewProj = GetViewProjectionMatrix();
         glm::vec4 clipSpacePos = viewProj * glm::vec4(point, 1.0f);
-        
+
         // Perspective divide
         glm::vec3 ndcPos = glm::vec3(clipSpacePos) / clipSpacePos.w;
-        
+
         // Check if point is within the view frustum (with radius tolerance)
         float tolerance = radius / std::max(std::abs(clipSpacePos.w), 1.0f);
-        
+
         return (ndcPos.x >= -1.0f - tolerance && ndcPos.x <= 1.0f + tolerance &&
                 ndcPos.y >= -1.0f - tolerance && ndcPos.y <= 1.0f + tolerance &&
                 ndcPos.z >= -1.0f - tolerance && ndcPos.z <= 1.0f + tolerance);
@@ -224,11 +224,11 @@ namespace agl {
         front.y = sin(glm::radians(Pitch));
         front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
         Front = glm::normalize(front);
-        
+
         // Also re-calculate the Right and Up vector
         Right = glm::normalize(glm::cross(Front, WorldUp));
         Up = glm::normalize(glm::cross(Right, Front));
-        
+
         // Apply roll rotation if needed
         if (std::abs(Roll) > 0.001f) {
             glm::mat3 rollMatrix = glm::mat3(glm::rotate(glm::mat4(1.0f), glm::radians(Roll), Front));

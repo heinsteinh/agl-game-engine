@@ -20,6 +20,7 @@ public:
             return false;
         }
 
+
         AGL_INFO("Initializing AGL Shooter Camera Demo...");
 
         // Initialize the AGL renderer
@@ -56,7 +57,7 @@ public:
         settings.rotationSmoothing = 0.1f;      // Light rotation smoothing
         settings.shakeIntensity = 1.0f;         // Full shake intensity
         settings.constrainPitch = true;         // Prevent camera flipping
-        
+
         m_cameraController->SetSettings(settings);
 
         // Create a simple shader program
@@ -103,7 +104,7 @@ public:
         AGL_INFO("Camera Shake Test: X key");
         AGL_INFO("Switch Camera Mode: 1-4 keys");
         AGL_INFO("==================================");
-        
+
         return true;
     }
 
@@ -219,7 +220,7 @@ public:
         ImGui::Text("Performance:");
         ImGui::Text("FPS: %.1f", GetFPS());
         ImGui::Text("Frame Time: %.3f ms", GetDeltaTime() * 1000.0f);
-        
+
         ImGui::Separator();
 
         // Camera information
@@ -238,7 +239,7 @@ public:
             const char* modeNames[] = { "First Person", "Third Person", "Spectator", "Fixed" };
             int currentMode = static_cast<int>(m_cameraController->GetMode());
             ImGui::Text("Camera Mode: %s", modeNames[currentMode]);
-            
+
             ImGui::Text("States:");
             ImGui::BulletText("Aiming: %s", m_cameraController->IsAiming() ? "YES" : "NO");
             ImGui::BulletText("Sprinting: %s", m_cameraController->IsSprinting() ? "YES" : "NO");
@@ -250,16 +251,16 @@ public:
         // Settings controls
         if (m_cameraController) {
             auto& settings = m_cameraController->GetSettings();
-            
+
             if (ImGui::CollapsingHeader("Camera Settings")) {
                 ImGui::SliderFloat("Movement Speed", &settings.movementSpeed, 1.0f, 20.0f);
                 ImGui::SliderFloat("Mouse Sensitivity", &settings.mouseSensitivity, 0.01f, 1.0f);
                 ImGui::SliderFloat("Default FOV", &settings.defaultFOV, 45.0f, 120.0f);
                 ImGui::SliderFloat("Sprint FOV", &settings.sprintFOV, 45.0f, 120.0f);
                 ImGui::SliderFloat("Aim FOV", &settings.aimFOV, 20.0f, 90.0f);
-                
+
                 ImGui::Checkbox("Invert Y", &settings.invertY);
-                
+
                 if (ImGui::Button("Reset Settings")) {
                     settings = agl::CameraSettings(); // Reset to defaults
                     m_cameraController->SetSettings(settings);
@@ -273,7 +274,7 @@ public:
         if (ImGui::Button("Test Camera Shake")) {
             m_cameraController->AddShake(1.0f, 0.8f);
         }
-        
+
         if (ImGui::Button("Reset Camera")) {
             m_cameraController->Reset();
         }
@@ -290,49 +291,49 @@ public:
         // Instructions window
         if (m_showInstructions) {
             ImGui::Begin("Controls (Press H to toggle)", &m_showInstructions);
-            
+
             ImGui::Text("=== MOVEMENT ===");
             ImGui::BulletText("W/A/S/D - Move forward/left/backward/right");
             ImGui::BulletText("SPACE - Move up/jump");
             ImGui::BulletText("LEFT CTRL - Crouch/move down");
             ImGui::BulletText("LEFT SHIFT - Sprint (hold)");
-            
+
             ImGui::Text("\n=== CAMERA ===");
             ImGui::BulletText("Mouse - Look around");
             ImGui::BulletText("RIGHT MOUSE - Aim (changes FOV)");
             ImGui::BulletText("Mouse Wheel - Zoom");
-            
+
             ImGui::Text("\n=== MODES ===");
             ImGui::BulletText("1 - First Person");
             ImGui::BulletText("2 - Third Person");
             ImGui::BulletText("3 - Spectator");
             ImGui::BulletText("4 - Fixed");
-            
+
             ImGui::Text("\n=== OTHER ===");
             ImGui::BulletText("TAB - Toggle wireframe");
             ImGui::BulletText("X - Test camera shake");
             ImGui::BulletText("H - Toggle this help");
-            
+
             ImGui::End();
         }
     }
 
     void Shutdown() {
         AGL_INFO("Shutting down AGL Shooter Camera Demo...");
-        
+
         // Clean up resources
         if (m_shader) {
             m_shader.reset();
         }
-        
+
         if (m_planeVA) {
             m_planeVA.reset();
         }
-        
+
         if (m_planeVB) {
             m_planeVB.reset();
         }
-        
+
         if (m_planeIB) {
             m_planeIB.reset();
         }
@@ -350,7 +351,7 @@ public:
 
         // Call parent shutdown
         agl::Game::Shutdown();
-        
+
         AGL_INFO("Shooter Camera Demo shutdown complete");
     }
 
@@ -371,8 +372,8 @@ private:
     bool m_wireframeMode;
 };
 
-int main_shooter_camera() {
-    AGL_INFO("Starting AGL Shooter Camera Demo...");
+
+int main_shooter() {
 
     ShooterCameraDemo demo;
 

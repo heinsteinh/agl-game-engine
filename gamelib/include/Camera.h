@@ -113,11 +113,11 @@ namespace agl {
         glm::vec3 GetFront() const { return Front; }
         glm::vec3 GetUp() const { return Up; }
         glm::vec3 GetRight() const { return Right; }
-        
+
         float GetYaw() const { return Yaw; }
         float GetPitch() const { return Pitch; }
         float GetRoll() const { return Roll; }
-        
+
         float GetZoom() const { return Zoom; }
         float GetAspectRatio() const { return AspectRatio; }
 
