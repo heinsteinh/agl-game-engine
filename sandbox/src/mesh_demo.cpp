@@ -77,7 +77,7 @@ public:
                 FragPos = vec3(model * vec4(a_Position, 1.0));
                 Normal = normalMatrix * a_Normal;
                 TexCoords = a_TexCoords;
-                
+
                 gl_Position = projection * view * vec4(FragPos, 1.0);
             }
         )";
