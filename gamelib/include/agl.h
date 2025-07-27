@@ -8,9 +8,12 @@
 #include "CameraController.h"
 #include "DispatchQueue.h"
 #include "Logger.h"
+#include "ProjectileSystem.h"
+#include "Renderer.h"
 #include "SigSlot.h"
 #include "game.h"
 #include "input.h"
+#include "mesh.h"
 #include "window.h"
 #include <imgui.h>
 
