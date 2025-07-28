@@ -213,7 +213,7 @@ public:
         ImGui::End();
     }
 
-    void Shutdown() override {
+    void Shutdown() {
         // Stop background queue
         if (m_backgroundQueue) {
             m_backgroundQueue->stop();

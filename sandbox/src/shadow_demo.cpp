@@ -1,6 +1,5 @@
 #include "ShadowSystem.h"
 #include "agl.h"
-#include <imgui.h>
 #include <iostream>
 #include <memory>
 #include <vector>
