@@ -895,4 +895,51 @@ void Mesh::BindMaterialTextures(ShaderProgram &shader) {
     }
 }
 
+Mesh Mesh::CreateGroundPlane(float size, int segments) {
+    std::vector<Vertex> vertices;
+    std::vector<uint32_t> indices;
+
+    float halfSize = size * 0.5f;
+    float step = size / segments;
+
+    // Generate vertices
+    for (int z = 0; z <= segments; ++z) {
+        for (int x = 0; x <= segments; ++x) {
+            Vertex vertex;
+            vertex.position = glm::vec3(-halfSize + x * step, 0.0f, -halfSize + z * step);
+            vertex.normal = glm::vec3(0.0f, 1.0f, 0.0f);
+            vertex.texCoords = glm::vec2(static_cast<float>(x) / segments, static_cast<float>(z) / segments);
+            vertices.push_back(vertex);
+        }
+    }
+
+    // Generate indices for triangles
+    for (int z = 0; z < segments; ++z) {
+        for (int x = 0; x < segments; ++x) {
+            int topLeft = z * (segments + 1) + x;
+            int topRight = topLeft + 1;
+            int bottomLeft = (z + 1) * (segments + 1) + x;
+            int bottomRight = bottomLeft + 1;
+
+            // First triangle
+            indices.push_back(topLeft);
+            indices.push_back(bottomLeft);
+            indices.push_back(topRight);
+
+            // Second triangle
+            indices.push_back(topRight);
+            indices.push_back(bottomLeft);
+            indices.push_back(bottomRight);
+        }
+    }
+
+    // Create material for ground
+    Material material;
+    material.diffuse = glm::vec3(0.5f, 0.5f, 0.5f);  // Gray ground
+    material.specular = glm::vec3(0.2f, 0.2f, 0.2f); // Low specularity
+    material.shininess = 8.0f;
+
+    return Mesh(vertices, indices, material);
+}
+
 } // namespace agl

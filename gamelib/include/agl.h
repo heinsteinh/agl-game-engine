@@ -10,6 +10,7 @@
 #include "Logger.h"
 #include "ProjectileSystem.h"
 #include "Renderer.h"
+#include "ShadowSystem.h"
 #include "SigSlot.h"
 #include "game.h"
 #include "input.h"

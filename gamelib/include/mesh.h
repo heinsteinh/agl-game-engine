@@ -262,6 +262,14 @@ public:
      */
     static Mesh CreateProjectile(ProjectileType type = ProjectileType::Default, float scale = 1.0f);
 
+    /**
+     * @brief Create a ground plane mesh for shadow demonstrations
+     * @param size Size of the ground plane (width and depth)
+     * @param segments Number of segments for tessellation
+     * @return Ground plane mesh
+     */
+    static Mesh CreateGroundPlane(float size = 20.0f, int segments = 10);
+
     // ========== Getters ==========
 
     /**
