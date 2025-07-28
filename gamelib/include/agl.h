@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "CameraController.h"
 #include "DispatchQueue.h"
+#include "Gizmos.h"
 #include "Logger.h"
 #include "ProjectileSystem.h"
 #include "Renderer.h"

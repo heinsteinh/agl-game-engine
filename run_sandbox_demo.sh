@@ -19,7 +19,7 @@ if [ $? -eq 0 ]; then
         echo "=== Shadow Demo Controls ==="
         echo "WASD + Mouse: Camera movement"
         echo "F1: Toggle UI"
-        echo "F2: Toggle wireframe" 
+        echo "F2: Toggle wireframe"
         echo "F3: Toggle shadows"
         echo "F4: Toggle light animation"
         echo "ESC: Exit"
@@ -33,11 +33,11 @@ if [ $? -eq 0 ]; then
         echo ""
     else
         echo "=== Demo Controls ==="
-        echo "WASD + Mouse: Camera movement" 
+        echo "WASD + Mouse: Camera movement"
         echo "ESC: Exit"
         echo ""
     fi
-    
+
     echo "Running agl_${DEMO_NAME}_demo..."
     ./bin/agl_${DEMO_NAME}_demo
 else

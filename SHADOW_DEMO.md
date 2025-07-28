@@ -56,7 +56,7 @@ The shadow system implements:
 
 ### Objects in Scene
 - **3 Colored Cubes**: Red, Green, Blue (cast and receive shadows)
-- **2 Spheres**: Yellow, Magenta (cast and receive shadows)  
+- **2 Spheres**: Yellow, Magenta (cast and receive shadows)
 - **Ground Plane**: Large tessellated plane (receives shadows)
 
 ### Light Setup

@@ -37,8 +37,18 @@ add_executable(agl_shadow_demo
     src/shadow_demo.cpp
 )
 
+# Create gizmos demo executable
+add_executable(agl_gizmos_demo
+    src/gizmos_demo.cpp
+)
+
+# Create simple gizmos demo executable
+add_executable(agl_gizmos_simple_demo
+    src/gizmos_simple_demo.cpp
+)
+
 # Set target properties for all executables
-foreach(target agl_${DEMO_NAME}_demo sandbox agl_projectile_demo agl_shadow_demo)
+foreach(target agl_${DEMO_NAME}_demo sandbox agl_projectile_demo agl_shadow_demo agl_gizmos_demo agl_gizmos_simple_demo)
     set_target_properties(${target} PROPERTIES
         CXX_STANDARD 17
         CXX_STANDARD_REQUIRED ON
@@ -52,13 +62,13 @@ foreach(target agl_${DEMO_NAME}_demo sandbox agl_projectile_demo agl_shadow_demo
 endforeach()
 
 # Link gamelib
-foreach(target agl_${DEMO_NAME}_demo sandbox agl_projectile_demo agl_shadow_demo)
+foreach(target agl_${DEMO_NAME}_demo sandbox agl_projectile_demo agl_shadow_demo agl_gizmos_demo agl_gizmos_simple_demo)
     target_link_libraries(${target} PRIVATE gamelib)
 endforeach()
 
 # Copy assets and resources
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/assets")
-    foreach(target agl_${DEMO_NAME}_demo sandbox agl_projectile_demo agl_shadow_demo)
+    foreach(target agl_${DEMO_NAME}_demo sandbox agl_projectile_demo agl_shadow_demo agl_gizmos_demo agl_gizmos_simple_demo)
         add_custom_command(TARGET ${target} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${CMAKE_CURRENT_SOURCE_DIR}/assets
@@ -69,7 +79,7 @@ endif()
 
 # Copy imgui.ini if it exists
 if(EXISTS "${CMAKE_SOURCE_DIR}/imgui.ini")
-    foreach(target agl_${DEMO_NAME}_demo sandbox agl_projectile_demo agl_shadow_demo)
+    foreach(target agl_${DEMO_NAME}_demo sandbox agl_projectile_demo agl_shadow_demo agl_gizmos_demo agl_gizmos_simple_demo)
         add_custom_command(TARGET ${target} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${CMAKE_SOURCE_DIR}/imgui.ini
@@ -80,7 +90,7 @@ endif()
 
 # Visual Studio specific settings
 if(WIN32 AND CMAKE_GENERATOR MATCHES "Visual Studio")
-    foreach(target agl_${DEMO_NAME}_demo sandbox agl_projectile_demo agl_shadow_demo)
+    foreach(target agl_${DEMO_NAME}_demo sandbox agl_projectile_demo agl_shadow_demo agl_gizmos_demo agl_gizmos_simple_demo)
         set_target_properties(${target} PROPERTIES
             VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>"
         )
@@ -90,7 +100,7 @@ endif()
 # Check if gamelib target exists (when built as part of main project)
 if(TARGET gamelib)
     # Link the gamelib library (this automatically includes all dependencies)
-    foreach(target agl_${DEMO_NAME}_demo sandbox agl_projectile_demo agl_shadow_demo)
+    foreach(target agl_${DEMO_NAME}_demo sandbox agl_projectile_demo agl_shadow_demo agl_gizmos_demo agl_gizmos_simple_demo)
         target_link_libraries(${target} PRIVATE gamelib)
     endforeach()
     message(STATUS "Using gamelib target from parent project")
@@ -100,7 +110,7 @@ else()
 
     if(agl-gamelib_FOUND)
         # Use pre-built gamelib library
-        foreach(target agl_${DEMO_NAME}_demo sandbox agl_projectile_demo agl_shadow_demo)
+        foreach(target agl_${DEMO_NAME}_demo sandbox agl_projectile_demo agl_shadow_demo agl_gizmos_demo agl_gizmos_simple_demo)
             target_link_libraries(${target} PRIVATE AGL::gamelib)
         endforeach()
         message(STATUS "Using pre-built gamelib from: ${agl-gamelib_DIR}")
@@ -115,14 +125,14 @@ else()
         add_subdirectory(../gamelib gamelib_build)
 
         # Link the gamelib library
-        foreach(target agl_${DEMO_NAME}_demo sandbox agl_projectile_demo agl_shadow_demo)
+        foreach(target agl_${DEMO_NAME}_demo sandbox agl_projectile_demo agl_shadow_demo agl_gizmos_demo agl_gizmos_simple_demo)
             target_link_libraries(${target} PRIVATE gamelib)
         endforeach()
     endif()
 endif()
 
 # Additional include directories for demo-specific code
-foreach(target agl_${DEMO_NAME}_demo sandbox agl_projectile_demo agl_shadow_demo)
+foreach(target agl_${DEMO_NAME}_demo sandbox agl_projectile_demo agl_shadow_demo agl_gizmos_demo agl_gizmos_simple_demo)
     target_include_directories(${target} PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -141,7 +151,7 @@ endif()
 
 # Set debug working directory for Visual Studio
 if(WIN32)
-    foreach(target agl_${DEMO_NAME}_demo sandbox agl_projectile_demo agl_shadow_demo)
+    foreach(target agl_${DEMO_NAME}_demo sandbox agl_projectile_demo agl_shadow_demo agl_gizmos_demo agl_gizmos_simple_demo)
         set_target_properties(${target} PROPERTIES
             VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
         )
